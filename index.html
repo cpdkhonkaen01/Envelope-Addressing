@@ -126,21 +126,23 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--blue)}
 .steps-card li small{color:#98a2b3;font-size:8px}
 footer{display:flex;justify-content:space-between;width:min(1440px,92vw);margin:auto;padding:22px 0 30px;border-top:1px solid var(--line);color:#98a2b3;font-size:9px}
 
-dialog{width:min(760px,calc(100% - 32px));max-height:calc(100vh - 40px);padding:28px;border:0;border-radius:24px;box-shadow:0 30px 90px rgba(17,26,48,.3)}
+dialog{width:min(860px,calc(100% - 32px));max-height:calc(100vh - 40px);padding:34px;border:0;border-radius:24px;box-shadow:0 30px 90px rgba(17,26,48,.3)}
 dialog::backdrop{background:rgba(17,26,48,.56);backdrop-filter:blur(6px)}
 .dialog-title{display:flex;align-items:flex-start;justify-content:space-between}
-.dialog-title h2{font-size:24px}
-.close-button{width:35px;height:35px;border:1px solid #e1e6ed;border-radius:10px;background:#fff;color:#667085;font-size:21px}
-.dialog-info{margin:14px 0 20px;padding:12px 14px;border-radius:12px;background:#f5f7fb;color:#667085;font-size:10px;line-height:1.7}
-.form-field{display:block;margin-top:13px}
-.form-field>span{display:block;margin-bottom:6px;color:#475467;font-size:10px;font-weight:800}
-.form-field input,.form-field select{height:43px;padding:0 12px;border-radius:11px;font-size:10px}
-.form-field textarea{resize:vertical;padding:11px 12px;border-radius:11px;font-size:10px;line-height:1.6}
-.form-field small{display:block;margin-top:5px;color:#98a2b3;font-size:8px}
+.dialog-title .eyebrow{font-size:12px}
+.dialog-title h2{font-size:30px}
+.close-button{width:44px;height:44px;border:1px solid #e1e6ed;border-radius:12px;background:#fff;color:#667085;font-size:26px}
+.dialog-info{margin:16px 0 22px;padding:15px 17px;border-radius:12px;background:#f5f7fb;color:#667085;font-size:14px;line-height:1.7}
+.form-field{display:block;margin-top:16px}
+.form-field>span{display:block;margin-bottom:8px;color:#344054;font-size:14px;font-weight:800}
+.form-field input,.form-field select{height:54px;padding:0 15px;border-radius:12px;font-size:15px}
+.form-field textarea{resize:vertical;padding:13px 15px;border-radius:12px;font-size:15px;line-height:1.6}
+.form-field small{display:block;margin-top:7px;color:#7b8494;font-size:12px;line-height:1.5}
 .form-grid{display:grid;grid-template-columns:1.5fr .7fr;gap:12px}
 .form-grid.equal{grid-template-columns:1fr 1fr}
+.form-grid.single{grid-template-columns:1fr}
 .form-grid.three{grid-template-columns:repeat(3,1fr)}
-.form-message{min-height:20px;margin:12px 0 0;color:#475467;font-size:10px}
+.form-message{min-height:24px;margin:14px 0 0;color:#475467;font-size:13px}
 .form-message.error{color:#b42318}
 .form-message.success{color:#127454}
 button:disabled{cursor:not-allowed;opacity:.58}
@@ -150,7 +152,7 @@ button:disabled{cursor:not-allowed;opacity:.58}
 .category-badge.private{background:#fff3e8;color:#a14f12}
 .category-badge.person{background:#f3efff;color:#6941c6}
 dialog hr{height:1px;margin:20px 0 4px;border:0;background:#edf0f5}
-.dialog-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:22px}
+.dialog-actions{display:flex;justify-content:flex-end;gap:11px;margin-top:24px}.dialog-actions .button{min-height:50px;padding:0 22px;font-size:14px}
 
 @keyframes pulse{50%{opacity:.35}
 }
@@ -160,6 +162,7 @@ dialog hr{height:1px;margin:20px 0 4px;border:0;background:#edf0f5}
 .side-panel{grid-template-columns:1fr 1fr}
 }
 @media(max-width:760px){.topbar{min-height:68px;padding:0 18px}
+dialog{padding:22px}
 .brand small{display:none}
 .status-pill span{display:none}
 .workspace{width:min(100% - 28px,680px);padding-top:18px}
@@ -272,11 +275,11 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
       <form id="recipientForm">
         <div class="dialog-title"><div><span class="eyebrow">ฐานข้อมูลผู้รับ</span><h2>เพิ่มรายชื่อผู้รับ</h2></div><button class="close-button" id="closeRecipientDialog" type="button" aria-label="ปิด">×</button></div>
         <p class="dialog-info">ข้อมูลจะบันทึกลงชีต <strong>Recipients</strong> ผ่าน Google Apps Script โดยตรง</p>
-        <div class="form-grid equal">
+        <div class="form-grid equal single" id="categoryAndPrefixFields">
           <label class="form-field"><span>ประเภทผู้รับ *</span><select name="category" id="recipientCategory" required><option value="">เลือกประเภท</option><option value="หน่วยงานราชการ">หน่วยงานราชการ</option><option value="สหกรณ์และกลุ่มเกษตรกร">สหกรณ์และกลุ่มเกษตรกร</option><option value="ภาคเอกชน">ภาคเอกชน</option><option value="บุคคล">บุคคล</option></select></label>
-          <label class="form-field"><span>คำนำหน้า</span><select name="prefix"><option value="">ไม่ระบุ</option><option value="นาย">นาย</option><option value="นาง">นาง</option><option value="นางสาว">นางสาว</option></select></label>
+          <label class="form-field" id="prefixField" hidden><span>คำนำหน้า</span><select name="prefix"><option value="">ไม่ระบุ</option><option value="นาย">นาย</option><option value="นาง">นาง</option><option value="นางสาว">นางสาว</option></select></label>
         </div>
-        <div class="form-grid equal">
+        <div class="form-grid equal" id="personNameFields" hidden>
           <label class="form-field"><span>ชื่อ</span><input name="firstName" type="text" /></label>
           <label class="form-field"><span>นามสกุล</span><input name="lastName" type="text" /></label>
         </div>
@@ -599,6 +602,14 @@ function openRecipientDialog() {
 function updateRecipientFormRequirements() {
   const isPerson = elements.recipientForm.elements.category.value === "บุคคล";
   const department = elements.recipientForm.elements.department;
+  $("#prefixField").hidden = !isPerson;
+  $("#personNameFields").hidden = !isPerson;
+  $("#categoryAndPrefixFields").classList.toggle("single", !isPerson);
+  if (!isPerson) {
+    elements.recipientForm.elements.prefix.value = "";
+    elements.recipientForm.elements.firstName.value = "";
+    elements.recipientForm.elements.lastName.value = "";
+  }
   department.required = !isPerson;
   $("#departmentFieldLabel").textContent = isPerson ? "หน่วยงาน (ถ้ามี)" : "ชื่อหน่วยงาน *";
   $("#departmentFieldHint").textContent = isPerson
