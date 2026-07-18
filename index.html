@@ -48,7 +48,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .envelope-preview{position:relative;align-self:center;justify-self:center;width:min(480px,85%);aspect-ratio:1.85;transform:rotate(-4deg);border:1px solid rgba(23,58,165,.1);border-radius:15px;background:linear-gradient(155deg,#fff 40%,#f5f8ff);box-shadow:0 28px 56px rgba(32,67,140,.18)}
 .envelope-preview:after{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(32deg,transparent 0 48.5%,rgba(40,86,217,.055) 49% 49.5%,transparent 50%);content:""}
 .stamp{position:absolute;top:22px;right:24px;padding:6px 10px;border:1px dashed #f2a74b;border-radius:7px;color:#c66a08;font-size:9px;font-weight:800;transform:rotate(5deg)}
-.sender-mini{position:absolute;top:28px;left:30px;color:#7b8494;font-size:10px;font-weight:700;line-height:1.55}
+.garuda-mini{position:absolute;top:16px;left:30px;width:34px;height:38px;object-fit:contain;object-position:center;color:#111}
+.sender-mini{position:absolute;top:58px;left:30px;color:#7b8494;font-size:10px;font-weight:700;line-height:1.55}
 .receiver-mini{position:absolute;z-index:2;top:43%;left:42%;display:flex;flex-direction:column;line-height:1.6}
 .receiver-mini small{color:#98a2b3;font-size:9px}
 .receiver-mini strong{font-size:14px}
@@ -111,6 +112,7 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--blue)}
 .print-card label>span{display:block;margin-bottom:6px;color:#dbe5ff;font-size:9px;font-weight:700}
 .print-card select{height:42px;padding:0 12px;border-color:rgba(255,255,255,.18);border-radius:11px;background:rgba(255,255,255,.1);color:#fff;font-size:10px}
 .print-card option{color:var(--ink)}
+.print-card .garuda-option{display:flex;align-items:center;gap:9px;margin-top:12px;padding:10px 11px;border:1px solid rgba(255,255,255,.18);border-radius:11px;background:rgba(255,255,255,.08);cursor:pointer}.print-card .garuda-option input{width:17px;height:17px;flex:0 0 auto;accent-color:#fff}.print-card .garuda-option span{margin:0;color:#fff;font-size:10px;font-weight:800}
 .print-card>button{display:flex;align-items:center;justify-content:space-between;width:100%;height:45px;margin-top:11px;padding:0 14px;border:0;border-radius:11px;background:#fff;color:var(--blue-deep);font-size:10px;font-weight:900}
 .steps-card{padding:21px;border-radius:23px}
 .steps-title{padding-bottom:13px;border-bottom:1px solid #edf0f5}
@@ -221,6 +223,7 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
         </div>
         <div class="envelope-preview" aria-label="ตัวอย่างซองจดหมาย">
           <span class="stamp">หนังสือเวียน</span>
+          <img class="garuda-mini" id="garudaPreview" alt="ตราครุฑ" hidden />
           <span class="sender-mini">สำนักงานสหกรณ์<br />จังหวัดขอนแก่น</span>
           <div class="receiver-mini"><small>เรียน</small><strong>ประธานกรรมการ</strong><span>สหกรณ์การเกษตร… จำกัด</span><span>จังหวัดขอนแก่น 40000</span></div>
         </div>
@@ -259,6 +262,7 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
             <h2><span id="sideSelected">0</span> รายการ</h2>
             <p>ระบบจะสร้างหน้าพิมพ์แยก 1 ซองต่อ 1 รายชื่อ</p>
             <label><span>ขนาดซอง / กระดาษ</span><select id="paperSize"><option value="DL">ซอง DL · 22 × 11 ซม.</option><option value="C5">ซอง C5 · 22.9 × 16.2 ซม.</option><option value="A4">กระดาษ A4 · 21 × 29.7 ซม.</option></select></label>
+            <label class="garuda-option"><input id="showGaruda" type="checkbox" checked /><span>แสดงตราครุฑเหนือชื่อหน่วยงาน</span></label>
             <button id="printButton" type="button">ดูตัวอย่างและพิมพ์ <span>↗</span></button>
           </section>
           <section class="steps-card">
@@ -312,6 +316,8 @@ window.ENVELOPE_APP_CONFIG = {
   sender: "สำนักงานสหกรณ์จังหวัดขอนแก่น",
   senderAddress: "ศาลากลางจังหวัดขอนแก่น ถนนศูนย์ราชการ ตำบลในเมือง อำเภอเมืองขอนแก่น ขอนแก่น 40000",
   paperSize: "DL",
+  garudaImage: "https://img1.pic.in.th/images/-PNG0457c311e6c77ae0f.png",
+  showGaruda: true,
 };
 
     </script>
@@ -338,6 +344,8 @@ const state = {
     sender: defaults.sender || "สำนักงานสหกรณ์จังหวัดขอนแก่น",
     senderAddress: defaults.senderAddress || "ศาลากลางจังหวัดขอนแก่น ถนนศูนย์ราชการ ตำบลในเมือง อำเภอเมืองขอนแก่น ขอนแก่น 40000",
     paperSize: savedSettings.paperSize || defaults.paperSize || "DL",
+    garudaImage: defaults.garudaImage || "",
+    showGaruda: savedSettings.showGaruda !== undefined ? Boolean(savedSettings.showGaruda) : defaults.showGaruda !== false,
   },
 };
 
@@ -357,6 +365,7 @@ const elements = {
   empty: $("#emptyState"),
   paper: $("#paperSize"),
   paperLabel: $("#paperLabel"),
+  showGaruda: $("#showGaruda"),
   recipientDialog: $("#recipientDialog"),
   recipientForm: $("#recipientForm"),
   recipientFormMessage: $("#recipientFormMessage"),
@@ -538,6 +547,14 @@ function renderSummary() {
   elements.sideSelected.textContent = selectedCount;
   elements.paper.value = state.settings.paperSize;
   elements.paperLabel.textContent = state.settings.paperSize === "A4" ? "กระดาษ A4" : `ซอง ${state.settings.paperSize}`;
+  elements.showGaruda.checked = state.settings.showGaruda;
+  const garudaPreview = $("#garudaPreview");
+  if (state.settings.garudaImage && state.settings.showGaruda) {
+    garudaPreview.src = state.settings.garudaImage;
+    garudaPreview.hidden = false;
+  } else {
+    garudaPreview.hidden = true;
+  }
   $("#chooseStep").classList.toggle("done", selectedCount > 0);
 }
 
@@ -714,12 +731,15 @@ function printEnvelopes() {
     A4: ["210mm", "297mm", "กระดาษ A4"],
   };
   const [width, height, label] = sizes[state.settings.paperSize];
+  const garudaMarkup = state.settings.garudaImage && state.settings.showGaruda
+    ? `<img class="garuda" src="${state.settings.garudaImage}" alt="ตราครุฑ">`
+    : "";
   const pages = recipients.map((item) => {
     const locality = [
-      item.subdistrict && `ต./แขวง ${item.subdistrict}`,
-      item.district && `อ./เขต ${item.district}`,
+      item.subdistrict && `ตำบล ${item.subdistrict}`,
+      item.district && `อำเภอ ${item.district}`,
     ].filter(Boolean).join(" ");
-    return `<section class="envelope"><div class="sender"><strong>${escapeHtml(state.settings.sender)}</strong><br>${escapeHtml(state.settings.senderAddress)}</div><div class="recipient"><small>เรียน</small><h1>${escapeHtml(recipientName(item))}</h1>${item.position && recipientName(item) !== item.position ? `<p>${escapeHtml(item.position)}</p>` : ""}${item.department ? `<p class="organization">${escapeHtml(item.department)}</p>` : ""}<p>${escapeHtml(item.address1)}</p><p>${escapeHtml(locality)}</p><p>${item.province ? `จ. ${escapeHtml(item.province)}` : ""} <strong>${escapeHtml(item.postalCode)}</strong></p></div></section>`;
+    return `<section class="envelope"><div class="sender">${garudaMarkup}<strong>${escapeHtml(state.settings.sender)}</strong><br>${escapeHtml(state.settings.senderAddress)}</div><div class="recipient"><small>เรียน</small><h1>${escapeHtml(recipientName(item))}</h1>${item.position && recipientName(item) !== item.position ? `<p>${escapeHtml(item.position)}</p>` : ""}${item.department ? `<p class="organization">${escapeHtml(item.department)}</p>` : ""}<p>${escapeHtml(item.address1)}</p><p>${escapeHtml(locality)}</p><p>${item.province ? `จังหวัด ${escapeHtml(item.province)}` : ""} <strong>${escapeHtml(item.postalCode)}</strong></p></div></section>`;
   }).join("");
   const popup = window.open("", "_blank");
   if (!popup) {
@@ -727,7 +747,7 @@ function printEnvelopes() {
     return;
   }
   popup.opener = null;
-  popup.document.write(`<!doctype html><html lang="th"><head><meta charset="utf-8"><title>พิมพ์จ่าหน้าซอง</title><style>@page{size:${width} ${height};margin:0}*{box-sizing:border-box}body{margin:0;color:#17223b;font-family:"Noto Sans Thai",Tahoma,sans-serif}.envelope{position:relative;width:${width};height:${height};page-break-after:always;overflow:hidden;background:#fff}.envelope:last-child{page-break-after:auto}.sender{position:absolute;top:12mm;left:14mm;width:44%;font-size:9.5pt;line-height:1.55;color:#344054}.recipient{position:absolute;left:42%;top:42%;width:51%;transform:translateY(-20%);font-size:12pt;line-height:1.5}.recipient small{color:#667085;font-size:10pt}.recipient h1{margin:1mm 0 0;font-size:15pt}.recipient p{margin:.4mm 0}.organization{font-weight:700}@media screen{body{background:#eef2f7;padding:18px}.envelope{margin:0 auto 18px;box-shadow:0 12px 36px rgba(15,23,42,.14)}}</style></head><body>${pages}<script>addEventListener('load',()=>setTimeout(()=>print(),250));<\/script></body></html>`);
+  popup.document.write(`<!doctype html><html lang="th"><head><meta charset="utf-8"><title>พิมพ์จ่าหน้าซอง</title><style>@page{size:${width} ${height};margin:0}*{box-sizing:border-box}body{margin:0;color:#17223b;font-family:"Noto Sans Thai",Tahoma,sans-serif}.envelope{position:relative;width:${width};height:${height};page-break-after:always;overflow:hidden;background:#fff}.envelope:last-child{page-break-after:auto}.sender{position:absolute;top:7mm;left:14mm;width:44%;font-size:9.5pt;line-height:1.55;color:#111}.garuda{display:block;width:auto;height:17mm;margin:0 0 2mm 0;object-fit:contain;object-position:left center}.recipient{position:absolute;left:42%;top:42%;width:51%;transform:translateY(-20%);font-size:12pt;line-height:1.5}.recipient small{color:#667085;font-size:10pt}.recipient h1{margin:1mm 0 0;font-size:15pt}.recipient p{margin:.4mm 0}.organization{font-weight:700}@media screen{body{background:#eef2f7;padding:18px}.envelope{margin:0 auto 18px;box-shadow:0 12px 36px rgba(15,23,42,.14)}}</style></head><body>${pages}<script>addEventListener('load',()=>setTimeout(()=>print(),250));<\/script></body></html>`);
   popup.document.close();
   setNotice(`เตรียมพิมพ์ ${recipients.length} รายการ บน${label}`);
 }
@@ -758,8 +778,14 @@ elements.selectAll.addEventListener("change", () => {
 });
 elements.paper.addEventListener("change", (event) => {
   state.settings.paperSize = event.target.value;
-  localStorage.setItem("envelope-app-settings", JSON.stringify({ paperSize: state.settings.paperSize }));
+  localStorage.setItem("envelope-app-settings", JSON.stringify({ paperSize: state.settings.paperSize, showGaruda: state.settings.showGaruda }));
   renderSummary();
+});
+elements.showGaruda.addEventListener("change", (event) => {
+  state.settings.showGaruda = event.target.checked;
+  localStorage.setItem("envelope-app-settings", JSON.stringify({ paperSize: state.settings.paperSize, showGaruda: state.settings.showGaruda }));
+  renderSummary();
+  setNotice(state.settings.showGaruda ? "เปิดการแสดงตราครุฑแล้ว" : "ปิดการแสดงตราครุฑแล้ว");
 });
 $("#openAddRecipient").addEventListener("click", openRecipientDialog);
 $("#closeRecipientDialog").addEventListener("click", closeRecipientDialog);
