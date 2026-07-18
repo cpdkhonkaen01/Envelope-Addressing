@@ -99,9 +99,11 @@ td small{color:#8a94a5;font-size:9px}
 input[type=checkbox]{width:16px;height:16px;accent-color:var(--blue)}
 .department-text{display:block;max-width:220px;line-height:1.45}
 .address-text{color:#687386;white-space:nowrap}
-.action-cell{width:78px;text-align:right}
+.action-cell{width:150px;text-align:right}
+.row-actions{display:flex;justify-content:flex-end;gap:6px}
 .row-button{min-width:58px;padding:7px 9px;border:1px solid #dfe4ed;border-radius:9px;background:#fff;color:#667085;font-size:8px;font-weight:800}
 .row-button.active{border-color:#b9c9f5;background:var(--blue-soft);color:var(--blue)}
+.row-button.edit{border-color:#d7e0f7;color:#2856d9}
 .empty{padding:50px 20px;border-top:1px solid #edf0f5;color:var(--muted);text-align:center}
 
 .side-panel{display:grid;gap:15px}
@@ -110,8 +112,9 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--blue)}
 .print-card h2{font-size:32px}
 .print-card p{margin:6px 0 19px;color:#dbe5ff;font-size:10px;line-height:1.6}
 .print-card label>span{display:block;margin-bottom:6px;color:#dbe5ff;font-size:9px;font-weight:700}
-.print-card select{height:42px;padding:0 12px;border-color:rgba(255,255,255,.18);border-radius:11px;background:rgba(255,255,255,.1);color:#fff;font-size:10px}
+.print-card select,.print-card input[type=number]{width:100%;height:42px;padding:0 12px;border:1px solid rgba(255,255,255,.18);border-radius:11px;background:rgba(255,255,255,.1);color:#fff;font-size:10px}
 .print-card option{color:var(--ink)}
+.print-card .recipient-font-option{display:block;margin-top:12px}
 .print-card .garuda-option{display:flex;align-items:center;gap:9px;margin-top:12px;padding:10px 11px;border:1px solid rgba(255,255,255,.18);border-radius:11px;background:rgba(255,255,255,.08);cursor:pointer}.print-card .garuda-option input{width:17px;height:17px;flex:0 0 auto;accent-color:#fff}.print-card .garuda-option span{margin:0;color:#fff;font-size:10px;font-weight:800}
 .print-card>button{display:flex;align-items:center;justify-content:space-between;width:100%;height:45px;margin-top:11px;padding:0 14px;border:0;border-radius:11px;background:#fff;color:var(--blue-deep);font-size:10px;font-weight:900}
 .print-card>.sender-settings-button{justify-content:center;border:1px solid rgba(255,255,255,.32);background:rgba(255,255,255,.08);color:#fff}
@@ -159,6 +162,60 @@ button:disabled{cursor:not-allowed;opacity:.58}
 dialog hr{height:1px;margin:20px 0 4px;border:0;background:#edf0f5}
 .dialog-actions{display:flex;justify-content:flex-end;gap:11px;margin-top:24px}.dialog-actions .button{min-height:50px;padding:0 22px;font-size:14px}
 
+/* โหมดอ่านง่าย เหมาะสำหรับผู้ใช้งานสูงอายุ */
+body{font-size:16px}
+.brand strong{font-size:18px}
+.brand small{font-size:13px}
+.status-pill{padding:11px 16px;font-size:14px}
+.eyebrow{font-size:13px;letter-spacing:.08em}
+.hero p{font-size:17px;line-height:1.8}
+.button{min-height:52px;font-size:15px}
+.summary article,.notice{min-height:88px}
+.summary small{font-size:12px}
+.summary strong{font-size:16px}
+.notice{font-size:13px;line-height:1.6}
+.content-grid{grid-template-columns:minmax(0,1fr) 360px;gap:22px}
+.section-title{padding:28px 30px 20px}
+.section-title h2{font-size:25px}
+.small-button{min-height:46px;padding:10px 16px;font-size:14px}
+.filters{gap:14px;padding:8px 30px 24px}
+.search input{height:56px;padding-left:46px;border-radius:14px;font-size:17px}
+.department-filter>span{top:7px;font-size:11px}
+.department-filter select{height:56px;padding:18px 38px 0 13px;border-radius:14px;font-size:15px}
+table{min-width:980px;font-size:15px}
+th{padding:16px;color:#596579;font-size:12px}
+td{padding:17px 15px}
+td strong{margin-bottom:4px;font-size:16px;line-height:1.5}
+td small{font-size:13px;line-height:1.5}
+.department-text,.address-text{font-size:14px;line-height:1.55}
+input[type=checkbox]{width:20px;height:20px}
+.category-badge{padding:6px 10px;font-size:12px}
+.action-cell{width:180px}
+.row-button{min-width:72px;padding:10px 12px;border-radius:10px;font-size:13px}
+.print-card{padding:28px}
+.print-card h2{font-size:38px}
+.print-card p{font-size:14px}
+.print-card label>span{margin-bottom:8px;font-size:13px}
+.print-card select,.print-card input[type=number]{height:50px;font-size:15px}
+.print-card .garuda-option{min-height:50px;padding:12px 13px}
+.print-card .garuda-option input{width:21px;height:21px}
+.print-card .garuda-option span{font-size:14px}
+.print-card>button{height:52px;font-size:14px}
+.steps-title strong{font-size:16px}
+.steps-title small{font-size:13px}
+.steps-card li>b{width:36px;height:36px;font-size:14px}
+.steps-card li strong{font-size:14px}
+.steps-card li small{font-size:12px;line-height:1.5}
+footer{font-size:12px}
+.dialog-title .eyebrow{font-size:14px}
+.dialog-title h2{font-size:32px}
+.dialog-info{font-size:16px}
+.form-field>span{font-size:16px}
+.form-field input,.form-field select,.form-field textarea{font-size:17px}
+.form-field small{font-size:14px}
+.form-message{font-size:15px}
+.dialog-actions .button{font-size:16px}
+
 @keyframes pulse{50%{opacity:.35}
 }
 @media(max-width:1080px){.summary{grid-template-columns:repeat(3,1fr)}
@@ -174,18 +231,19 @@ dialog{padding:22px}
 .hero{display:block;min-height:auto;border-radius:23px}
 .hero-copy{padding:34px 26px 24px}
 .hero h1{font-size:38px}
-.hero p{font-size:13px}
+.hero p{font-size:15px}
 .envelope-preview{width:76%;margin:2px auto 34px}
 .summary{grid-template-columns:1fr 1fr}
 .summary article:nth-child(3){grid-column:1/-1}
 .filters{grid-template-columns:1fr}
 .section-title{align-items:flex-start}
 th:nth-child(3),th:nth-child(4),th:nth-child(5),td:nth-child(3),td:nth-child(4),td:nth-child(5){display:none}
+table{min-width:600px}
 .side-panel{grid-template-columns:1fr}
 .form-grid{grid-template-columns:1fr}
 footer{width:min(100% - 28px,680px);flex-direction:column}
 }
-@media(max-width:460px){.brand strong{font-size:13px}
+@media(max-width:460px){.brand strong{font-size:16px}
 .brand-mark{width:37px;height:37px}
 .hero h1{font-size:32px}
 .hero-actions{display:grid}
@@ -228,7 +286,7 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
           <span class="postage-permit-mini" id="postagePermitPreview"></span>
           <img class="garuda-mini" id="garudaPreview" alt="ตราครุฑ" hidden />
           <span class="sender-mini" id="senderPreview"></span>
-          <div class="receiver-mini"><small>เรียน</small><strong>ประธานกรรมการ</strong><span>สหกรณ์การเกษตร… จำกัด</span><span>จังหวัดขอนแก่น 40000</span></div>
+          <div class="receiver-mini" id="receiverPreview"><small>เรียน</small><strong>ประธานกรรมการ</strong><span>สหกรณ์การเกษตร… จำกัด</span><span>จังหวัดขอนแก่น 40000</span></div>
         </div>
       </section>
 
@@ -252,7 +310,7 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th class="check-cell"><input id="selectAll" type="checkbox" aria-label="เลือกทั้งหมด" /></th><th>ชื่อผู้รับ / ตำแหน่ง</th><th>ประเภท</th><th>หน่วยงาน</th><th>ที่อยู่</th><th class="action-cell">เลือก</th></tr></thead>
+              <thead><tr><th class="check-cell"><input id="selectAll" type="checkbox" aria-label="เลือกทั้งหมด" /></th><th>ชื่อผู้รับ / ตำแหน่ง</th><th>ประเภท</th><th>หน่วยงาน</th><th>ที่อยู่</th><th class="action-cell">จัดการ</th></tr></thead>
               <tbody id="recipientRows"></tbody>
             </table>
             <div class="empty" id="emptyState" hidden>ไม่พบรายชื่อที่ตรงกับคำค้นหา</div>
@@ -265,6 +323,8 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
             <h2><span id="sideSelected">0</span> รายการ</h2>
             <p>ระบบจะสร้างหน้าพิมพ์แยก 1 ซองต่อ 1 รายชื่อ</p>
             <label><span>ขนาดซอง / กระดาษ</span><select id="paperSize"><option value="DL">ซอง DL · 22 × 11 ซม.</option><option value="C5">ซอง C5 · 22.9 × 16.2 ซม.</option><option value="A4">กระดาษ A4 แนวตั้ง · 21 × 29.7 ซม.</option><option value="A4L">กระดาษ A4 แนวนอน · 29.7 × 21 ซม.</option></select></label>
+            <label class="recipient-font-option"><span>ขนาดฟอนต์ข้อมูลผู้รับ (พอยต์)</span><input id="recipientFontPt" type="number" min="8" max="24" step="0.5" /></label>
+            <button class="sender-settings-button" id="openRecipientLayoutSettings" type="button">✎ ปรับตำแหน่งและระยะผู้รับ</button>
             <label class="garuda-option"><input id="showGaruda" type="checkbox" checked /><span>แสดงตราครุฑเหนือชื่อหน่วยงาน</span></label>
             <button class="sender-settings-button" id="openSenderSettings" type="button">✎ แก้ไขข้อมูลผู้ส่งและตำแหน่ง</button>
             <button class="sender-settings-button" id="openPostagePermitSettings" type="button">✎ แก้ไขกรอบค่าฝากส่ง</button>
@@ -282,8 +342,8 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
 
     <dialog id="recipientDialog">
       <form id="recipientForm">
-        <div class="dialog-title"><div><span class="eyebrow">ฐานข้อมูลผู้รับ</span><h2>เพิ่มรายชื่อผู้รับ</h2></div><button class="close-button" id="closeRecipientDialog" type="button" aria-label="ปิด">×</button></div>
-        <p class="dialog-info">ข้อมูลจะบันทึกลงชีต <strong>Recipients</strong> ผ่าน Google Apps Script โดยตรง</p>
+        <div class="dialog-title"><div><span class="eyebrow">ฐานข้อมูลผู้รับ</span><h2 id="recipientDialogTitle">เพิ่มรายชื่อผู้รับ</h2></div><button class="close-button" id="closeRecipientDialog" type="button" aria-label="ปิด">×</button></div>
+        <p class="dialog-info" id="recipientDialogInfo">ข้อมูลจะบันทึกลงชีต <strong>Recipients</strong> ผ่าน Google Apps Script โดยตรง</p>
         <div class="form-grid equal single" id="categoryAndPrefixFields">
           <label class="form-field"><span>ประเภทผู้รับ *</span><select name="category" id="recipientCategory" required><option value="">เลือกประเภท</option><option value="หน่วยงานราชการ">หน่วยงานราชการ</option><option value="สหกรณ์และกลุ่มเกษตรกร">สหกรณ์และกลุ่มเกษตรกร</option><option value="ภาคเอกชน">ภาคเอกชน</option><option value="บุคคล">บุคคล</option></select></label>
           <label class="form-field" id="prefixField" hidden><span>คำนำหน้า</span><select name="prefix"><option value="">ไม่ระบุ</option><option value="นาย">นาย</option><option value="นาง">นาง</option><option value="นางสาว">นางสาว</option></select></label>
@@ -308,6 +368,19 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
         </div>
         <p class="form-message" id="recipientFormMessage" role="status" aria-live="polite"></p>
         <div class="dialog-actions"><button class="button secondary" id="cancelRecipient" type="button">ยกเลิก</button><button class="button primary" id="saveRecipient" type="submit">บันทึกลง Google Sheets</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="recipientLayoutDialog">
+      <form id="recipientLayoutForm">
+        <div class="dialog-title"><div><span class="eyebrow">ตำแหน่งบนซอง</span><h2>ปรับตำแหน่งผู้รับ</h2></div><button class="close-button" id="closeRecipientLayoutDialog" type="button" aria-label="ปิด">×</button></div>
+        <p class="dialog-info">ปรับตำแหน่งข้อความผู้รับได้เอง ค่าน้อยจะเลื่อนไปด้านบนหรือด้านซ้าย ค่ามากจะเลื่อนไปด้านล่างหรือด้านขวา</p>
+        <div class="form-grid three">
+          <label class="form-field"><span>ระยะจากขอบบน (%)</span><input name="recipientTopPercent" type="number" min="5" max="85" step="1" /><small>ปรับขึ้น–ลง</small></label>
+          <label class="form-field"><span>ระยะจากขอบซ้าย (%)</span><input name="recipientLeftPercent" type="number" min="5" max="80" step="1" /><small>ปรับซ้าย–ขวา</small></label>
+          <label class="form-field"><span>ระยะห่างบรรทัด</span><input name="recipientLineHeight" type="number" min="1" max="2.2" step="0.05" /><small>ค่าแนะนำ 1.5</small></label>
+        </div>
+        <div class="dialog-actions"><button class="button secondary" id="resetRecipientLayout" type="button">คืนค่าตำแหน่งแนะนำ</button><button class="button secondary" id="cancelRecipientLayout" type="button">ยกเลิก</button><button class="button primary" type="submit">บันทึกตำแหน่งผู้รับ</button></div>
       </form>
     </dialog>
 
@@ -367,6 +440,10 @@ window.ENVELOPE_APP_CONFIG = {
   senderLeftMm: 14,
   senderTextOffsetMm: 10,
   senderFontPt: 9.5,
+  recipientFontPt: 12,
+  recipientTopPercent: 40,
+  recipientLeftPercent: 42,
+  recipientLineHeight: 1.5,
   postagePermitText: "ชำระค่าฝากส่งเป็นรายเดือน\nใบอนุญาตเลขที่ xx/xxx\nไปรษณีย์เดชาวุธ",
   postagePermitTopMm: 7,
   postagePermitRightMm: 8,
@@ -397,6 +474,7 @@ const state = {
   category: "ทั้งหมด",
   department: "ทั้งหมด",
   connected: false,
+  editingRecipientId: null,
   settings: {
     appsScriptUrl: defaults.appsScriptUrl || "",
     sender: savedSettings.sender || defaults.sender || "สำนักงานสหกรณ์จังหวัดขอนแก่น",
@@ -414,6 +492,10 @@ const state = {
     senderLeftMm: clampNumber(savedSettings.senderLeftMm ?? defaults.senderLeftMm, 0, 60, 14),
     senderTextOffsetMm: clampNumber(savedSettings.senderTextOffsetMm ?? defaults.senderTextOffsetMm, 0, 30, 10),
     senderFontPt: clampNumber(savedSettings.senderFontPt ?? defaults.senderFontPt, 7, 20, 9.5),
+    recipientFontPt: clampNumber(savedSettings.recipientFontPt ?? defaults.recipientFontPt, 8, 24, 12),
+    recipientTopPercent: clampNumber(savedSettings.recipientTopPercent ?? defaults.recipientTopPercent, 5, 85, 40),
+    recipientLeftPercent: clampNumber(savedSettings.recipientLeftPercent ?? defaults.recipientLeftPercent, 5, 80, 42),
+    recipientLineHeight: clampNumber(savedSettings.recipientLineHeight ?? defaults.recipientLineHeight, 1, 2.2, 1.5),
     postagePermitText: savedSettings.postagePermitText || defaults.postagePermitText || "ชำระค่าฝากส่งเป็นรายเดือน\nใบอนุญาตเลขที่ xx/xxx\nไปรษณีย์เดชาวุธ",
     postagePermitTopMm: clampNumber(savedSettings.postagePermitTopMm ?? defaults.postagePermitTopMm, 0, 40, 7),
     postagePermitRightMm: clampNumber(savedSettings.postagePermitRightMm ?? defaults.postagePermitRightMm, 0, 60, 8),
@@ -437,11 +519,14 @@ const elements = {
   empty: $("#emptyState"),
   paper: $("#paperSize"),
   paperLabel: $("#paperLabel"),
+  recipientFont: $("#recipientFontPt"),
   showGaruda: $("#showGaruda"),
   recipientDialog: $("#recipientDialog"),
   recipientForm: $("#recipientForm"),
   recipientFormMessage: $("#recipientFormMessage"),
   saveRecipient: $("#saveRecipient"),
+  recipientLayoutDialog: $("#recipientLayoutDialog"),
+  recipientLayoutForm: $("#recipientLayoutForm"),
   senderDialog: $("#senderDialog"),
   senderForm: $("#senderForm"),
   postagePermitDialog: $("#postagePermitDialog"),
@@ -523,7 +608,8 @@ function setNotice(message) {
 function persistSettings() {
   const keys = [
     "sender", "senderAddress", "documentNumber", "paperSize", "showGaruda",
-    "garudaPlacement", "garudaSizeMm", "garudaStandardVersion", "senderTopMm", "senderLeftMm", "senderTextOffsetMm", "senderFontPt",
+    "garudaPlacement", "garudaSizeMm", "garudaStandardVersion", "senderTopMm", "senderLeftMm", "senderTextOffsetMm", "senderFontPt", "recipientFontPt",
+    "recipientTopPercent", "recipientLeftPercent", "recipientLineHeight",
     "postagePermitText", "postagePermitTopMm", "postagePermitRightMm", "postagePermitFontPt",
   ];
   const saved = Object.fromEntries(keys.map((key) => [key, state.settings[key]]));
@@ -617,7 +703,7 @@ function renderRows() {
       <td><span class="category-badge ${categoryClass(item.category)}">${escapeHtml(item.category)}</span></td>
       <td><span class="department-text">${escapeHtml(item.department || (item.category === "บุคคล" ? "บุคคล" : "ไม่ระบุหน่วยงาน"))}</span></td>
       <td><span class="address-text">${escapeHtml(item.district || item.address1)}, ${escapeHtml(item.province)} ${escapeHtml(item.postalCode)}</span></td>
-      <td class="action-cell"><button class="row-button ${checked ? "active" : ""}" data-select-id="${escapeHtml(item.id)}" type="button">${checked ? "เลือกแล้ว" : "เลือก"}</button></td>
+      <td class="action-cell"><div class="row-actions"><button class="row-button edit" data-edit-id="${escapeHtml(item.id)}" type="button">แก้ไข</button><button class="row-button ${checked ? "active" : ""}" data-select-id="${escapeHtml(item.id)}" type="button">${checked ? "เลือกแล้ว" : "เลือก"}</button></div></td>
     </tr>`;
   }).join("");
   elements.empty.hidden = rows.length > 0;
@@ -628,6 +714,9 @@ function renderRows() {
   document.querySelectorAll("[data-select-id]").forEach((button) => {
     button.addEventListener("click", () => toggleRecipient(button.dataset.selectId));
   });
+  document.querySelectorAll("[data-edit-id]").forEach((button) => {
+    button.addEventListener("click", () => openEditRecipientDialog(button.dataset.editId));
+  });
 }
 
 function renderSummary() {
@@ -637,6 +726,7 @@ function renderSummary() {
   elements.heroSelected.textContent = selectedCount;
   elements.sideSelected.textContent = selectedCount;
   elements.paper.value = state.settings.paperSize;
+  elements.recipientFont.value = state.settings.recipientFontPt;
   const paperLabels = {
     DL: "ซอง DL",
     C5: "ซอง C5",
@@ -660,6 +750,15 @@ function renderSummary() {
   postagePermitPreview.style.top = `${state.settings.postagePermitTopMm * previewScale}px`;
   postagePermitPreview.style.right = `${state.settings.postagePermitRightMm * previewScale}px`;
   postagePermitPreview.style.fontSize = `${state.settings.postagePermitFontPt * 0.82}px`;
+  const receiverPreview = $("#receiverPreview");
+  receiverPreview.style.top = `${state.settings.recipientTopPercent}%`;
+  receiverPreview.style.left = `${state.settings.recipientLeftPercent}%`;
+  receiverPreview.style.lineHeight = state.settings.recipientLineHeight;
+  receiverPreview.querySelector("small").style.fontSize = `${Math.max(7, state.settings.recipientFontPt * 0.75)}px`;
+  receiverPreview.querySelector("strong").style.fontSize = `${state.settings.recipientFontPt * 1.15}px`;
+  receiverPreview.querySelectorAll("span").forEach((line) => {
+    line.style.fontSize = `${state.settings.recipientFontPt * 0.82}px`;
+  });
   if (state.settings.garudaImage && state.settings.showGaruda) {
     garudaPreview.src = state.settings.garudaImage;
     garudaPreview.hidden = false;
@@ -731,12 +830,49 @@ function openRecipientDialog() {
     setNotice("ยังไม่ได้กำหนด Apps Script URL จึงไม่สามารถเพิ่มข้อมูลได้");
     return;
   }
+  state.editingRecipientId = null;
   elements.recipientForm.reset();
   elements.recipientFormMessage.textContent = "";
   elements.recipientFormMessage.className = "form-message";
+  $("#recipientDialogTitle").textContent = "เพิ่มรายชื่อผู้รับ";
+  $("#recipientDialogInfo").innerHTML = "ข้อมูลจะบันทึกลงชีต <strong>Recipients</strong> ผ่าน Google Apps Script โดยตรง";
+  elements.saveRecipient.textContent = "บันทึกลง Google Sheets";
   const savedAdminKey = sessionStorage.getItem("envelope-admin-key");
   if (savedAdminKey) elements.recipientForm.elements.adminKey.value = savedAdminKey;
   updateRecipientFormRequirements();
+  elements.recipientDialog.showModal();
+}
+
+function openEditRecipientDialog(id) {
+  if (!validateAppsScriptUrl(state.settings.appsScriptUrl)) {
+    setNotice("ยังไม่ได้กำหนด Apps Script URL จึงไม่สามารถแก้ไขข้อมูลได้");
+    return;
+  }
+  const recipient = state.recipients.find((item) => item.id === id);
+  if (!recipient) {
+    setNotice("ไม่พบรายการผู้รับที่ต้องการแก้ไข");
+    return;
+  }
+
+  state.editingRecipientId = id;
+  elements.recipientForm.reset();
+  elements.recipientFormMessage.textContent = "";
+  elements.recipientFormMessage.className = "form-message";
+  $("#recipientDialogTitle").textContent = "แก้ไขข้อมูลผู้รับ";
+  $("#recipientDialogInfo").innerHTML = "บันทึกการแก้ไขกลับไปยังแถวเดิมในชีต <strong>Recipients</strong>";
+  elements.saveRecipient.textContent = "บันทึกการแก้ไข";
+
+  elements.recipientForm.elements.category.value = recipient.category;
+  updateRecipientFormRequirements();
+  const fields = [
+    "prefix", "firstName", "lastName", "position", "department", "address1",
+    "subdistrict", "district", "province", "postalCode",
+  ];
+  fields.forEach((name) => {
+    elements.recipientForm.elements[name].value = recipient[name] || "";
+  });
+  const savedAdminKey = sessionStorage.getItem("envelope-admin-key");
+  if (savedAdminKey) elements.recipientForm.elements.adminKey.value = savedAdminKey;
   elements.recipientDialog.showModal();
 }
 
@@ -760,6 +896,42 @@ function updateRecipientFormRequirements() {
 
 function closeRecipientDialog() {
   if (elements.recipientDialog.open) elements.recipientDialog.close();
+  state.editingRecipientId = null;
+}
+
+function fillRecipientLayoutForm() {
+  const fields = ["recipientTopPercent", "recipientLeftPercent", "recipientLineHeight"];
+  fields.forEach((name) => {
+    elements.recipientLayoutForm.elements[name].value = state.settings[name];
+  });
+}
+
+function openRecipientLayoutSettings() {
+  fillRecipientLayoutForm();
+  elements.recipientLayoutDialog.showModal();
+}
+
+function closeRecipientLayoutSettings() {
+  if (elements.recipientLayoutDialog.open) elements.recipientLayoutDialog.close();
+}
+
+function resetRecipientLayout() {
+  elements.recipientLayoutForm.elements.recipientTopPercent.value = defaults.recipientTopPercent ?? 40;
+  elements.recipientLayoutForm.elements.recipientLeftPercent.value = defaults.recipientLeftPercent ?? 42;
+  elements.recipientLayoutForm.elements.recipientLineHeight.value = defaults.recipientLineHeight ?? 1.5;
+}
+
+function handleRecipientLayoutSubmit(event) {
+  event.preventDefault();
+  if (!elements.recipientLayoutForm.reportValidity()) return;
+  const values = Object.fromEntries(new FormData(elements.recipientLayoutForm).entries());
+  state.settings.recipientTopPercent = clampNumber(values.recipientTopPercent, 5, 85, 40);
+  state.settings.recipientLeftPercent = clampNumber(values.recipientLeftPercent, 5, 80, 42);
+  state.settings.recipientLineHeight = clampNumber(values.recipientLineHeight, 1, 2.2, 1.5);
+  persistSettings();
+  renderSummary();
+  closeRecipientLayoutSettings();
+  setNotice("บันทึกตำแหน่งและระยะผู้รับแล้ว");
 }
 
 function fillSenderForm() {
@@ -850,6 +1022,14 @@ function delay(milliseconds) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
+function recipientPayloadMatches(row, payload) {
+  const fields = [
+    "category", "prefix", "firstName", "lastName", "position", "department",
+    "address1", "subdistrict", "district", "province", "postalCode",
+  ];
+  return fields.every((field) => String(row[field] || "").trim() === String(payload[field] || "").trim());
+}
+
 async function postRecipient(payload) {
   let readablePayload = null;
   try {
@@ -873,15 +1053,20 @@ async function postRecipient(payload) {
   for (let attempt = 0; attempt < 5; attempt += 1) {
     await delay(700 + (attempt * 350));
     const rows = await requestRecipients(state.settings.appsScriptUrl);
-    if (rows.some((item) => String(item.id) === payload.id)) return rows;
+    const savedRow = rows.find((item) => String(item.id) === payload.id);
+    if (savedRow && (payload.action !== "updateRecipient" || recipientPayloadMatches(savedRow, payload))) return rows;
   }
-  throw new Error("ยังตรวจไม่พบข้อมูลใหม่ กรุณาตรวจรหัสผู้ดูแลและ Deployment ของ Apps Script");
+  throw new Error(payload.action === "updateRecipient"
+    ? "ยังตรวจไม่พบข้อมูลที่แก้ไข กรุณาตรวจ Deployment ของ Apps Script"
+    : "ยังตรวจไม่พบข้อมูลใหม่ กรุณาตรวจรหัสผู้ดูแลและ Deployment ของ Apps Script");
 }
 
 async function handleRecipientSubmit(event) {
   event.preventDefault();
   if (!elements.recipientForm.reportValidity()) return;
 
+  const isEditing = Boolean(state.editingRecipientId);
+  const recipientId = state.editingRecipientId;
   const values = Object.fromEntries(new FormData(elements.recipientForm).entries());
   const payload = Object.fromEntries(Object.entries(values).map(([key, value]) => [key, String(value).trim()]));
   if (payload.category === "บุคคล" && !payload.firstName && !payload.lastName) {
@@ -896,12 +1081,16 @@ async function handleRecipientSubmit(event) {
     elements.recipientForm.elements.department.focus();
     return;
   }
-  payload.action = "createRecipient";
-  payload.id = `WEB-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+  payload.action = isEditing ? "updateRecipient" : "createRecipient";
+  payload.id = isEditing
+    ? recipientId
+    : `WEB-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
 
   elements.saveRecipient.disabled = true;
   elements.saveRecipient.textContent = "กำลังบันทึก…";
-  elements.recipientFormMessage.textContent = "กำลังส่งข้อมูลไป Google Sheets…";
+  elements.recipientFormMessage.textContent = isEditing
+    ? "กำลังบันทึกการแก้ไขไปยัง Google Sheets…"
+    : "กำลังส่งข้อมูลไป Google Sheets…";
   elements.recipientFormMessage.className = "form-message";
 
   try {
@@ -912,9 +1101,10 @@ async function handleRecipientSubmit(event) {
     state.department = "ทั้งหมด";
     state.selected.add(payload.id);
     render();
-    elements.recipientFormMessage.textContent = "บันทึกข้อมูลเรียบร้อยแล้ว";
+    elements.recipientFormMessage.textContent = isEditing ? "แก้ไขข้อมูลเรียบร้อยแล้ว" : "บันทึกข้อมูลเรียบร้อยแล้ว";
     elements.recipientFormMessage.className = "form-message success";
-    setNotice(`เพิ่ม ${payload.department} ลงฐานข้อมูลแล้ว`);
+    const savedName = recipientName(normalizeRecipient(payload));
+    setNotice(isEditing ? `แก้ไข ${savedName} แล้ว` : `เพิ่ม ${savedName} ลงฐานข้อมูลแล้ว`);
     await delay(500);
     closeRecipientDialog();
   } catch (error) {
@@ -923,7 +1113,7 @@ async function handleRecipientSubmit(event) {
     elements.recipientFormMessage.className = "form-message error";
   } finally {
     elements.saveRecipient.disabled = false;
-    elements.saveRecipient.textContent = "บันทึกลง Google Sheets";
+    elements.saveRecipient.textContent = isEditing ? "บันทึกการแก้ไข" : "บันทึกลง Google Sheets";
   }
 }
 
@@ -958,6 +1148,12 @@ function printEnvelopes() {
   const postagePermitTopMm = clampNumber(state.settings.postagePermitTopMm, 0, 40, 7);
   const postagePermitRightMm = clampNumber(state.settings.postagePermitRightMm, 0, 60, 8);
   const postagePermitFontPt = clampNumber(state.settings.postagePermitFontPt, 6, 14, 8.5);
+  const recipientFontPt = clampNumber(state.settings.recipientFontPt, 8, 24, 12);
+  const recipientNameFontPt = Math.min(28, recipientFontPt + 3);
+  const recipientSmallFontPt = Math.max(7, recipientFontPt - 2);
+  const recipientTopPercent = clampNumber(state.settings.recipientTopPercent, 5, 85, 40);
+  const recipientLeftPercent = clampNumber(state.settings.recipientLeftPercent, 5, 80, 42);
+  const recipientLineHeight = clampNumber(state.settings.recipientLineHeight, 1, 2.2, 1.5);
   const postagePermitHtml = escapeHtml(state.settings.postagePermitText).replace(/\r?\n/g, "<br>");
   const pages = recipients.map((item) => {
     const locality = [
@@ -972,7 +1168,7 @@ function printEnvelopes() {
     return;
   }
   popup.opener = null;
-  popup.document.write(`<!doctype html><html lang="th"><head><meta charset="utf-8"><title>พิมพ์จ่าหน้าซอง</title><style>@page{size:${width} ${height};margin:0}*{box-sizing:border-box}body{margin:0;color:#17223b;font-family:"Noto Sans Thai",Tahoma,sans-serif}.envelope{position:relative;width:${width};height:${height};page-break-after:always;overflow:hidden;background:#fff}.envelope:last-child{page-break-after:auto}.sender{position:absolute;top:${senderTopMm}mm;left:${senderLeftMm}mm;width:55%;font-size:${senderFontPt}pt;line-height:1.45;color:#111}.sender-content{min-width:0}.sender-address{margin-top:.7mm}.document-number{margin-top:1.2mm;font-weight:700}.garuda{display:block;width:auto;height:${garudaSizeMm}mm;object-fit:contain;object-position:left top}.sender.garuda-left{display:flex;align-items:flex-start;gap:3mm}.garuda-left .garuda{flex:0 0 auto}.garuda-left .sender-content{padding-top:${senderTextOffsetMm}mm}.garuda-above .garuda{margin:0 0 2mm 0}.postage-permit{position:absolute;top:${postagePermitTopMm}mm;right:${postagePermitRightMm}mm;display:flex;width:50mm;height:25mm;align-items:center;justify-content:center;overflow:hidden;padding:2mm;border:.35mm solid #111;color:#111;font-size:${postagePermitFontPt}pt;font-weight:700;line-height:1.45;text-align:center}.recipient{position:absolute;left:42%;top:42%;width:51%;transform:translateY(-20%);font-size:12pt;line-height:1.5}.recipient small{color:#667085;font-size:10pt}.recipient h1{margin:1mm 0 0;font-size:15pt}.recipient p{margin:.4mm 0}.organization{font-weight:700}@media screen{body{background:#eef2f7;padding:18px}.envelope{margin:0 auto 18px;box-shadow:0 12px 36px rgba(15,23,42,.14)}}</style></head><body>${pages}<script>addEventListener('load',()=>setTimeout(()=>print(),250));<\/script></body></html>`);
+  popup.document.write(`<!doctype html><html lang="th"><head><meta charset="utf-8"><title>พิมพ์จ่าหน้าซอง</title><style>@page{size:${width} ${height};margin:0}*{box-sizing:border-box}body{margin:0;color:#17223b;font-family:"Noto Sans Thai",Tahoma,sans-serif}.envelope{position:relative;width:${width};height:${height};page-break-after:always;overflow:hidden;background:#fff}.envelope:last-child{page-break-after:auto}.sender{position:absolute;top:${senderTopMm}mm;left:${senderLeftMm}mm;width:55%;font-size:${senderFontPt}pt;line-height:1.45;color:#111}.sender-content{min-width:0}.sender-address{margin-top:.7mm}.document-number{margin-top:1.2mm;font-weight:700}.garuda{display:block;width:auto;height:${garudaSizeMm}mm;object-fit:contain;object-position:left top}.sender.garuda-left{display:flex;align-items:flex-start;gap:3mm}.garuda-left .garuda{flex:0 0 auto}.garuda-left .sender-content{padding-top:${senderTextOffsetMm}mm}.garuda-above .garuda{margin:0 0 2mm 0}.postage-permit{position:absolute;top:${postagePermitTopMm}mm;right:${postagePermitRightMm}mm;display:flex;width:50mm;height:25mm;align-items:center;justify-content:center;overflow:hidden;padding:2mm;border:.35mm solid #111;color:#111;font-size:${postagePermitFontPt}pt;font-weight:700;line-height:1.45;text-align:center}.recipient{position:absolute;left:${recipientLeftPercent}%;top:${recipientTopPercent}%;width:51%;font-size:${recipientFontPt}pt;line-height:${recipientLineHeight}}.recipient small{color:#667085;font-size:${recipientSmallFontPt}pt}.recipient h1{margin:1mm 0 0;font-size:${recipientNameFontPt}pt}.recipient p{margin:.4mm 0}.organization{font-weight:700}@media screen{body{background:#eef2f7;padding:18px}.envelope{margin:0 auto 18px;box-shadow:0 12px 36px rgba(15,23,42,.14)}}</style></head><body>${pages}<script>addEventListener('load',()=>setTimeout(()=>print(),250));<\/script></body></html>`);
   popup.document.close();
   setNotice(`เตรียมพิมพ์ ${recipients.length} รายการ บน${label}`);
 }
@@ -1006,6 +1202,12 @@ elements.paper.addEventListener("change", (event) => {
   persistSettings();
   renderSummary();
 });
+elements.recipientFont.addEventListener("change", (event) => {
+  state.settings.recipientFontPt = clampNumber(event.target.value, 8, 24, 12);
+  persistSettings();
+  renderSummary();
+  setNotice(`ตั้งขนาดฟอนต์ผู้รับเป็น ${state.settings.recipientFontPt} พอยต์แล้ว`);
+});
 elements.showGaruda.addEventListener("change", (event) => {
   state.settings.showGaruda = event.target.checked;
   persistSettings();
@@ -1017,6 +1219,11 @@ $("#closeRecipientDialog").addEventListener("click", closeRecipientDialog);
 $("#cancelRecipient").addEventListener("click", closeRecipientDialog);
 $("#recipientCategory").addEventListener("change", updateRecipientFormRequirements);
 elements.recipientForm.addEventListener("submit", handleRecipientSubmit);
+$("#openRecipientLayoutSettings").addEventListener("click", openRecipientLayoutSettings);
+$("#closeRecipientLayoutDialog").addEventListener("click", closeRecipientLayoutSettings);
+$("#cancelRecipientLayout").addEventListener("click", closeRecipientLayoutSettings);
+$("#resetRecipientLayout").addEventListener("click", resetRecipientLayout);
+elements.recipientLayoutForm.addEventListener("submit", handleRecipientLayoutSubmit);
 $("#openSenderSettings").addEventListener("click", openSenderSettings);
 $("#closeSenderDialog").addEventListener("click", closeSenderSettings);
 $("#cancelSenderSettings").addEventListener("click", closeSenderSettings);
