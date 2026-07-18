@@ -116,9 +116,9 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--blue)}
 .print-card option{color:var(--ink)}
 .print-card .recipient-font-option{display:block;margin-top:12px}
 .print-card .garuda-option{display:flex;align-items:center;gap:9px;margin-top:12px;padding:10px 11px;border:1px solid rgba(255,255,255,.18);border-radius:11px;background:rgba(255,255,255,.08);cursor:pointer}.print-card .garuda-option input{width:17px;height:17px;flex:0 0 auto;accent-color:#fff}.print-card .garuda-option span{margin:0;color:#fff;font-size:10px;font-weight:800}
-.print-card>button{display:flex;align-items:center;justify-content:space-between;width:100%;height:45px;margin-top:11px;padding:0 14px;border:0;border-radius:11px;background:#fff;color:var(--blue-deep);font-size:10px;font-weight:900}
-.print-card>.sender-settings-button{justify-content:center;border:1px solid rgba(255,255,255,.32);background:rgba(255,255,255,.08);color:#fff}
-.print-card>.sender-settings-button:hover{background:rgba(255,255,255,.15)}
+.print-card button{display:flex;align-items:center;justify-content:space-between;width:100%;height:45px;margin-top:11px;padding:0 14px;border:0;border-radius:11px;background:#fff;color:var(--blue-deep);font-size:10px;font-weight:900}
+.print-card .sender-settings-button{justify-content:center;border:1px solid rgba(255,255,255,.32);background:rgba(255,255,255,.08);color:#fff}
+.print-card .sender-settings-button:hover{background:rgba(255,255,255,.15)}
 footer{display:flex;justify-content:space-between;width:min(1440px,92vw);margin:auto;padding:22px 0 30px;border-top:1px solid var(--line);color:#98a2b3;font-size:9px}
 
 dialog{width:min(860px,calc(100% - 32px));max-height:calc(100vh - 40px);padding:34px;border:0;border-radius:24px;box-shadow:0 30px 90px rgba(17,26,48,.3)}
@@ -171,8 +171,8 @@ body{font-size:16px}
 .summary small{font-size:12px}
 .summary strong{font-size:16px}
 .notice{font-size:13px;line-height:1.6}
-.content-grid{grid-template-columns:minmax(0,1fr) 420px;gap:24px}
-.side-panel{display:block}
+.content-grid{grid-template-columns:1fr;gap:18px}
+.side-panel{order:-1;display:block}
 .section-title{padding:28px 30px 20px}
 .section-title h2{font-size:25px}
 .small-button{min-height:46px;padding:10px 16px;font-size:14px}
@@ -180,17 +180,24 @@ body{font-size:16px}
 .search input{height:56px;padding-left:46px;border-radius:14px;font-size:17px}
 .department-filter>span{top:7px;font-size:11px}
 .department-filter select{height:56px;padding:18px 38px 0 13px;border-radius:14px;font-size:15px}
-table{min-width:980px;font-size:15px}
+table{min-width:1200px;font-size:15px}
 th{padding:16px;color:#596579;font-size:12px}
 td{padding:17px 15px}
 td strong{margin-bottom:4px;font-size:16px;line-height:1.5}
 td small{font-size:13px;line-height:1.5}
 .department-text,.address-text{font-size:14px;line-height:1.55}
+.address-text{display:block;min-width:360px;white-space:normal}
 input[type=checkbox]{width:20px;height:20px}
 .category-badge{padding:6px 10px;font-size:12px}
 .action-cell{width:180px}
 .row-button{min-width:72px;padding:10px 12px;border-radius:10px;font-size:13px}
-.print-card{position:sticky;top:105px;padding:30px}
+.print-card{position:static;display:grid;grid-template-columns:220px minmax(0,1fr);gap:26px;align-items:center;padding:26px 30px}
+.print-overview{align-self:stretch;padding-right:24px;border-right:1px solid rgba(255,255,255,.2)}
+.print-overview p{margin-bottom:0}
+.print-controls{display:grid;grid-template-columns:2fr 1fr 1.25fr 1fr;gap:12px;align-items:end}
+.print-controls>*{min-width:0;margin:0!important}
+.print-controls .paper-size-option{grid-column:span 2}
+.print-controls .garuda-option{height:52px}
 .print-card h2{font-size:38px}
 .print-card p{font-size:14px}
 .print-card label>span{margin-bottom:8px;font-size:13px}
@@ -198,7 +205,7 @@ input[type=checkbox]{width:20px;height:20px}
 .print-card .garuda-option{min-height:50px;padding:12px 13px}
 .print-card .garuda-option input{width:21px;height:21px}
 .print-card .garuda-option span{font-size:14px}
-.print-card>button{height:52px;font-size:14px}
+.print-card button{height:52px;font-size:14px}
 footer{width:min(2000px,96vw);font-size:12px}
 .dialog-title .eyebrow{font-size:14px}
 .dialog-title h2{font-size:32px}
@@ -214,7 +221,10 @@ footer{width:min(2000px,96vw);font-size:12px}
 @media(max-width:1080px){.summary{grid-template-columns:repeat(3,1fr)}
 .notice{grid-column:1/-1;min-height:52px}
 .content-grid{grid-template-columns:1fr}
-.print-card{position:static}
+.print-card{grid-template-columns:1fr}
+.print-overview{padding:0;border:0}
+.print-controls{grid-template-columns:repeat(2,minmax(0,1fr))}
+.print-controls .paper-size-option{grid-column:span 2}
 }
 @media(max-width:760px){.topbar{min-height:68px;padding:0 18px}
 dialog{padding:22px}
@@ -233,6 +243,8 @@ dialog{padding:22px}
 th:nth-child(3),th:nth-child(4),th:nth-child(5),td:nth-child(3),td:nth-child(4),td:nth-child(5){display:none}
 table{min-width:600px}
 .side-panel{grid-template-columns:1fr}
+.print-controls{grid-template-columns:1fr}
+.print-controls .paper-size-option{grid-column:auto}
 .form-grid{grid-template-columns:1fr}
 footer{width:min(100% - 28px,680px);flex-direction:column}
 }
@@ -312,16 +324,16 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
 
         <aside class="side-panel">
           <section class="print-card">
-            <span class="eyebrow light">พร้อมพิมพ์</span>
-            <h2><span id="sideSelected">0</span> รายการ</h2>
-            <p>ระบบจะสร้างหน้าพิมพ์แยก 1 ซองต่อ 1 รายชื่อ</p>
-            <label><span>ขนาดซอง / กระดาษ</span><select id="paperSize"><option value="DL">ซอง DL · 22 × 11 ซม.</option><option value="C5">ซอง C5 · 22.9 × 16.2 ซม.</option><option value="A4">กระดาษ A4 แนวตั้ง · 21 × 29.7 ซม.</option><option value="A4L">กระดาษ A4 แนวนอน · 29.7 × 21 ซม.</option></select></label>
-            <label class="recipient-font-option"><span>ขนาดฟอนต์ข้อมูลผู้รับ (พอยต์)</span><input id="recipientFontPt" type="number" min="8" max="24" step="0.5" /></label>
-            <button class="sender-settings-button" id="openRecipientLayoutSettings" type="button">✎ ปรับตำแหน่งและระยะผู้รับ</button>
-            <label class="garuda-option"><input id="showGaruda" type="checkbox" checked /><span>แสดงตราครุฑเหนือชื่อหน่วยงาน</span></label>
-            <button class="sender-settings-button" id="openSenderSettings" type="button">✎ แก้ไขข้อมูลผู้ส่งและตำแหน่ง</button>
-            <button class="sender-settings-button" id="openPostagePermitSettings" type="button">✎ แก้ไขกรอบค่าฝากส่ง</button>
-            <button id="printButton" type="button">ดูตัวอย่างและพิมพ์ <span>↗</span></button>
+            <div class="print-overview"><span class="eyebrow light">พร้อมพิมพ์</span><h2><span id="sideSelected">0</span> รายการ</h2><p>ระบบจะสร้างหน้าพิมพ์แยก 1 ซองต่อ 1 รายชื่อ</p></div>
+            <div class="print-controls">
+              <label class="paper-size-option"><span>ขนาดซอง / กระดาษ</span><select id="paperSize"><option value="DL">ซอง DL · 22 × 11 ซม.</option><option value="C5">ซอง C5 · 22.9 × 16.2 ซม.</option><option value="A4">กระดาษ A4 แนวตั้ง · 21 × 29.7 ซม.</option><option value="A4L">กระดาษ A4 แนวนอน · 29.7 × 21 ซม.</option></select></label>
+              <label class="recipient-font-option"><span>ขนาดฟอนต์ข้อมูลผู้รับ (พอยต์)</span><input id="recipientFontPt" type="number" min="8" max="24" step="0.5" /></label>
+              <button class="sender-settings-button" id="openRecipientLayoutSettings" type="button">✎ ปรับตำแหน่งและระยะผู้รับ</button>
+              <label class="garuda-option"><input id="showGaruda" type="checkbox" checked /><span>แสดงตราครุฑ</span></label>
+              <button class="sender-settings-button" id="openSenderSettings" type="button">✎ แก้ไขข้อมูลผู้ส่ง</button>
+              <button class="sender-settings-button" id="openPostagePermitSettings" type="button">✎ แก้ไขกรอบค่าฝากส่ง</button>
+              <button id="printButton" type="button">ดูตัวอย่างและพิมพ์ <span>↗</span></button>
+            </div>
           </section>
         </aside>
       </section>
@@ -584,6 +596,16 @@ function recipientName(item) {
   return name || item.position || item.department || "ไม่ระบุชื่อผู้รับ";
 }
 
+function recipientFullAddress(item) {
+  return [
+    item.address1,
+    formatAddressArea("ตำบล", item.subdistrict),
+    formatAddressArea("อำเภอ", item.district),
+    formatAddressArea("จังหวัด", item.province),
+    item.postalCode,
+  ].filter(Boolean).join(" ");
+}
+
 function categoryClass(category) {
   if (category === "สหกรณ์และกลุ่มเกษตรกร") return "cooperative";
   if (category === "ภาคเอกชน") return "private";
@@ -702,7 +724,7 @@ function renderRows() {
       <td><strong>${escapeHtml(recipientName(item))}</strong><small>${escapeHtml(item.position)}</small></td>
       <td><span class="category-badge ${categoryClass(item.category)}">${escapeHtml(item.category)}</span></td>
       <td><span class="department-text">${escapeHtml(item.department || (item.category === "บุคคล" ? "บุคคล" : "ไม่ระบุหน่วยงาน"))}</span></td>
-      <td><span class="address-text">${escapeHtml(item.district || item.address1)}, ${escapeHtml(item.province)} ${escapeHtml(item.postalCode)}</span></td>
+      <td><span class="address-text">${escapeHtml(recipientFullAddress(item))}</span></td>
       <td class="action-cell"><div class="row-actions"><button class="row-button edit" data-edit-id="${escapeHtml(item.id)}" type="button">แก้ไข</button><button class="row-button ${checked ? "active" : ""}" data-select-id="${escapeHtml(item.id)}" type="button">${checked ? "เลือกแล้ว" : "เลือก"}</button></div></td>
     </tr>`;
   }).join("");
