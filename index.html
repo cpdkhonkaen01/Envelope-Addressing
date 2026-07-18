@@ -33,7 +33,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .icon-button{width:39px;height:39px;border:1px solid #e3e7ef;border-radius:12px;background:#fff;color:#475467}
 .workspace{width:min(1440px,92vw);margin:auto;padding:32px 0 54px}
 
-.hero{position:relative;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(350px,.88fr);min-height:390px;overflow:hidden;border-radius:30px;background:linear-gradient(118deg,#f9fbff,#eef3ff 55%,#e8f5f2);box-shadow:var(--shadow)}
+.hero{position:relative;display:grid;grid-template-columns:minmax(0,.9fr) minmax(480px,1.1fr);min-height:460px;overflow:hidden;border-radius:30px;background:linear-gradient(118deg,#f9fbff,#eef3ff 55%,#e8f5f2);box-shadow:var(--shadow)}
 .hero-copy{align-self:center;padding:50px 24px 52px 58px}
 .eyebrow{display:block;margin-bottom:8px;color:var(--blue);font-size:10px;font-weight:900;letter-spacing:.13em;text-transform:uppercase}
 .hero h1{margin:0;font-size:clamp(37px,4vw,58px);line-height:1.14;letter-spacing:-.04em}
@@ -45,15 +45,23 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .button.primary:hover{transform:translateY(-1px);background:var(--blue-deep)}
 .button.primary b{display:inline-grid;min-width:24px;height:24px;margin-left:8px;place-items:center;border-radius:8px;background:rgba(255,255,255,.18)}
 .button.secondary{border:1px solid #d9dfeb;background:#fff;color:#344054}
-.envelope-preview{position:relative;align-self:center;justify-self:center;width:min(480px,85%);aspect-ratio:1.85;transform:rotate(-4deg);border:1px solid rgba(23,58,165,.1);border-radius:15px;background:linear-gradient(155deg,#fff 40%,#f5f8ff);box-shadow:0 28px 56px rgba(32,67,140,.18)}
-.envelope-preview:after{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(32deg,transparent 0 48.5%,rgba(40,86,217,.055) 49% 49.5%,transparent 50%);content:""}
-.postage-permit-mini{position:absolute;z-index:2;display:flex;width:100px;height:50px;align-items:center;justify-content:center;padding:5px;border:1px solid #596579;background:rgba(255,255,255,.88);color:#263149;font-size:7px;font-weight:800;line-height:1.35;text-align:center;white-space:pre-line}
-.garuda-mini{position:absolute;top:16px;left:30px;width:34px;height:38px;object-fit:contain;object-position:center;color:#111}
-.sender-mini{position:absolute;top:58px;left:30px;width:48%;color:#596579;font-size:10px;font-weight:700;line-height:1.45;white-space:pre-line}
-.receiver-mini{position:absolute;z-index:2;top:43%;left:42%;display:flex;flex-direction:column;line-height:1.6}
-.receiver-mini small{color:#98a2b3;font-size:10px}
-.receiver-mini strong{font-size:10px}
-.receiver-mini span{font-size:10px}
+.preview-panel{align-self:center;justify-self:center;width:min(720px,94%)}
+.preview-size-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 2px 10px;color:#667085;font-size:13px}
+.preview-size-heading strong{color:#263149;font-size:14px}
+.envelope-preview{position:relative;width:100%;aspect-ratio:229/162;overflow:hidden;border:1px solid rgba(23,58,165,.16);border-radius:4px;background:#fff;box-shadow:0 24px 52px rgba(32,67,140,.18);font-family:"Noto Sans Thai",Tahoma,sans-serif}
+.postage-permit-mini{position:absolute;z-index:3;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #111;background:#fff;color:#111;font-weight:800;line-height:1.45;text-align:center;white-space:pre-line}
+.sender-mini-block{position:absolute;z-index:2;width:55%;color:#111}
+.sender-mini-block.garuda-left{display:flex;align-items:flex-start}
+.garuda-mini{display:block;width:auto;object-fit:contain;object-position:left top;color:#111}
+.sender-mini{min-width:0;color:#111;font-weight:400;line-height:1.45}
+.sender-mini strong{display:block}
+.sender-address-mini{margin-top:0}
+.sender-document-mini{font-weight:700}
+.receiver-mini{position:absolute;z-index:2;width:51%;color:#17223b}
+.receiver-mini small{display:block;color:#667085}
+.receiver-mini h1{font:inherit;font-weight:800}
+.receiver-mini p{font:inherit}
+.receiver-mini .organization,.receiver-mini .postal-code{font-weight:700}
 
 .summary{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr)) minmax(260px,1.25fr);gap:12px;margin:18px 0}
 .summary article,.notice{display:flex;align-items:center;min-height:76px;border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:0 7px 22px rgba(35,50,82,.035)}
@@ -164,7 +172,7 @@ body{font-size:16px}
 .eyebrow{font-size:13px;letter-spacing:.08em}
 .hero p{margin-top:12px;font-size:16px;line-height:1.7}
 .hero-actions{margin-top:18px}
-.envelope-preview{width:min(430px,88%)}
+.preview-panel{width:min(720px,94%)}
 .button{min-height:52px;font-size:15px}
 .summary{margin:14px 0 18px}
 .summary article,.notice{min-height:88px}
@@ -236,7 +244,8 @@ dialog{padding:22px}
 .hero-copy{padding:34px 26px 24px}
 .hero h1{font-size:38px}
 .hero p{font-size:15px}
-.envelope-preview{width:76%;margin:2px auto 34px}
+.preview-panel{width:88%;margin:2px auto 34px}
+.preview-size-heading{align-items:flex-start;flex-direction:column;gap:2px}
 .summary{grid-template-columns:1fr 1fr}
 .summary article:nth-child(3){grid-column:1/-1}
 .filters{grid-template-columns:1fr}
@@ -288,11 +297,16 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
             <button class="button primary" id="heroPrint" type="button">พิมพ์ที่เลือก <b id="heroSelected">0</b></button>
           </div>
         </div>
-        <div class="envelope-preview" aria-label="ตัวอย่างซองจดหมาย">
-          <span class="postage-permit-mini" id="postagePermitPreview"></span>
-          <img class="garuda-mini" id="garudaPreview" alt="ตราครุฑ" hidden />
-          <span class="sender-mini" id="senderPreview"></span>
-          <div class="receiver-mini" id="receiverPreview"><small>เรียน</small><strong>ประธานกรรมการ</strong><span>สหกรณ์การเกษตร… จำกัด</span><span>จังหวัดขอนแก่น 40000</span></div>
+        <div class="preview-panel">
+          <div class="preview-size-heading"><span>ตัวอย่างย่อส่วนตามสัดส่วนจริง</span><strong id="previewSizeLabel">ซอง C5 · 229 × 162 มม.</strong></div>
+          <div class="envelope-preview" id="envelopePreview" aria-label="ตัวอย่างซองจดหมายตามสัดส่วนจริง">
+            <span class="postage-permit-mini" id="postagePermitPreview"></span>
+            <div class="sender-mini-block" id="senderPreviewBlock">
+              <img class="garuda-mini" id="garudaPreview" alt="ตราครุฑ" />
+              <div class="sender-mini" id="senderPreview"></div>
+            </div>
+            <div class="receiver-mini" id="receiverPreview"></div>
+          </div>
         </div>
       </section>
 
@@ -764,47 +778,76 @@ function renderSummary() {
   elements.showSender.checked = state.settings.showSender;
   elements.showGaruda.checked = state.settings.showGaruda;
   elements.showGaruda.disabled = !state.settings.showSender;
+  const envelopePreview = $("#envelopePreview");
+  const senderPreviewBlock = $("#senderPreviewBlock");
   const garudaPreview = $("#garudaPreview");
   const senderPreview = $("#senderPreview");
   const postagePermitPreview = $("#postagePermitPreview");
-  const previewScale = 2;
+  const previewPaperSizes = {
+    DL: [220, 110],
+    C5: [229, 162],
+    A4: [210, 297],
+    A4L: [297, 210],
+  };
+  const [previewPaperWidth, previewPaperHeight] = previewPaperSizes[state.settings.paperSize] || previewPaperSizes.DL;
+  envelopePreview.style.aspectRatio = `${previewPaperWidth} / ${previewPaperHeight}`;
+  envelopePreview.setAttribute("aria-label", `${paperLabels[state.settings.paperSize] || paperLabels.DL} ขนาด ${previewPaperWidth} คูณ ${previewPaperHeight} มิลลิเมตร`);
+  $("#previewSizeLabel").textContent = `${paperLabels[state.settings.paperSize] || paperLabels.DL} · ${previewPaperWidth} × ${previewPaperHeight} มม.`;
+  const previewScale = (envelopePreview.clientWidth || 480) / previewPaperWidth;
+  const ptToPreviewPx = (pt) => pt * (25.4 / 72) * previewScale;
   const senderTop = state.settings.senderTopMm * previewScale;
   const senderLeft = state.settings.senderLeftMm * previewScale;
   const garudaHeight = state.settings.garudaSizeMm * previewScale;
-  senderPreview.textContent = [state.settings.sender, state.settings.senderAddress, state.settings.documentNumber]
-    .filter(Boolean)
-    .join("\n");
-  senderPreview.hidden = !state.settings.showSender;
-  senderPreview.style.fontSize = `${state.settings.senderFontPt * 1.05}px`;
+  const senderAddressPreview = escapeHtml(state.settings.senderAddress).replace(/\r?\n/g, "<br>");
+  senderPreview.innerHTML = `<strong>${escapeHtml(state.settings.sender)}</strong><div class="sender-address-mini">${senderAddressPreview}</div>${state.settings.documentNumber ? `<div class="sender-document-mini">${escapeHtml(state.settings.documentNumber)}</div>` : ""}`;
+  senderPreviewBlock.hidden = !state.settings.showSender;
+  senderPreviewBlock.style.top = `${senderTop}px`;
+  senderPreviewBlock.style.left = `${senderLeft}px`;
+  senderPreviewBlock.style.fontSize = `${ptToPreviewPx(state.settings.senderFontPt)}px`;
+  senderPreviewBlock.className = `sender-mini-block garuda-${state.settings.garudaPlacement === "left" ? "left" : "above"}`;
+  senderPreview.style.paddingTop = state.settings.garudaPlacement === "left" ? `${state.settings.senderTextOffsetMm * previewScale}px` : "0";
+  senderPreview.style.paddingLeft = "0";
+  senderPreviewBlock.style.gap = state.settings.garudaPlacement === "left" ? `${3 * previewScale}px` : "0";
+  senderPreview.querySelector(".sender-address-mini").style.marginTop = `${0.7 * previewScale}px`;
+  const senderDocumentPreview = senderPreview.querySelector(".sender-document-mini");
+  if (senderDocumentPreview) senderDocumentPreview.style.marginTop = `${1.2 * previewScale}px`;
   postagePermitPreview.textContent = state.settings.postagePermitText;
   postagePermitPreview.style.top = `${state.settings.postagePermitTopMm * previewScale}px`;
   postagePermitPreview.style.right = `${state.settings.postagePermitRightMm * previewScale}px`;
-  postagePermitPreview.style.fontSize = `${state.settings.postagePermitFontPt * 0.82}px`;
+  postagePermitPreview.style.width = `${50 * previewScale}px`;
+  postagePermitPreview.style.height = `${25 * previewScale}px`;
+  postagePermitPreview.style.padding = `${2 * previewScale}px`;
+  postagePermitPreview.style.borderWidth = `${Math.max(1, 0.35 * previewScale)}px`;
+  postagePermitPreview.style.fontSize = `${ptToPreviewPx(state.settings.postagePermitFontPt)}px`;
   const receiverPreview = $("#receiverPreview");
+  const previewRecipient = state.recipients.find((item) => state.selected.has(item.id)) || state.recipients[0];
+  if (previewRecipient) {
+    const previewLocality = [
+      formatAddressArea("ตำบล", previewRecipient.subdistrict),
+      formatAddressArea("อำเภอ", previewRecipient.district),
+    ].filter(Boolean).join(" ");
+    const previewProvince = formatAddressArea("จังหวัด", previewRecipient.province);
+    receiverPreview.innerHTML = `<small>เรียน</small><h1>${escapeHtml(recipientName(previewRecipient))}</h1>${previewRecipient.position && recipientName(previewRecipient) !== previewRecipient.position ? `<p>${escapeHtml(previewRecipient.position)}</p>` : ""}${previewRecipient.department ? `<p class="organization">${escapeHtml(previewRecipient.department)}</p>` : ""}<p>${escapeHtml(previewRecipient.address1)}</p><p>${escapeHtml(previewLocality)}</p><p>${escapeHtml(previewProvince)}</p>${previewRecipient.postalCode ? `<p class="postal-code">${escapeHtml(previewRecipient.postalCode)}</p>` : ""}`;
+  } else {
+    receiverPreview.innerHTML = "<small>เรียน</small><h1>เลือกผู้รับเพื่อดูตัวอย่าง</h1>";
+  }
   receiverPreview.style.top = `${state.settings.recipientTopPercent}%`;
   receiverPreview.style.left = `${state.settings.recipientLeftPercent}%`;
   receiverPreview.style.lineHeight = state.settings.recipientLineHeight;
-  receiverPreview.querySelector("small").style.fontSize = `${state.settings.recipientFontPt}px`;
-  receiverPreview.querySelector("strong").style.fontSize = `${state.settings.recipientFontPt}px`;
-  receiverPreview.querySelectorAll("span").forEach((line) => {
-    line.style.fontSize = `${state.settings.recipientFontPt}px`;
+  receiverPreview.style.fontSize = `${ptToPreviewPx(state.settings.recipientFontPt)}px`;
+  const receiverHeading = receiverPreview.querySelector("h1");
+  if (receiverHeading) receiverHeading.style.margin = `${1 * previewScale}px 0 0`;
+  receiverPreview.querySelectorAll("p").forEach((line) => {
+    line.style.margin = `${0.4 * previewScale}px 0`;
   });
-  if (state.settings.showSender && state.settings.garudaImage && state.settings.showGaruda) {
+  if (state.settings.showSender && state.settings.garudaImage) {
     garudaPreview.src = state.settings.garudaImage;
-    garudaPreview.hidden = false;
-    garudaPreview.style.top = `${senderTop}px`;
-    garudaPreview.style.left = `${senderLeft}px`;
+    garudaPreview.style.visibility = state.settings.showGaruda ? "visible" : "hidden";
     garudaPreview.style.width = "auto";
     garudaPreview.style.height = `${garudaHeight}px`;
+    garudaPreview.style.marginBottom = state.settings.garudaPlacement === "above" ? `${2 * previewScale}px` : "0";
   } else {
-    garudaPreview.hidden = true;
-  }
-  if (state.settings.garudaPlacement === "left") {
-    senderPreview.style.top = `${senderTop + (state.settings.senderTextOffsetMm * previewScale)}px`;
-    senderPreview.style.left = `${senderLeft + (garudaHeight * 0.9) + 7}px`;
-  } else {
-    senderPreview.style.top = `${senderTop + garudaHeight + 4}px`;
-    senderPreview.style.left = `${senderLeft}px`;
+    garudaPreview.style.visibility = "hidden";
   }
 }
 
@@ -1277,6 +1320,11 @@ $("#resetPostagePermit").addEventListener("click", resetPostagePermit);
 elements.postagePermitForm.addEventListener("submit", handlePostagePermitSubmit);
 $("#printButton").addEventListener("click", printEnvelopes);
 $("#heroPrint").addEventListener("click", printEnvelopes);
+let previewResizeFrame;
+window.addEventListener("resize", () => {
+  cancelAnimationFrame(previewResizeFrame);
+  previewResizeFrame = requestAnimationFrame(renderSummary);
+});
 
 render();
 connectToSheet();
