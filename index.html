@@ -833,7 +833,7 @@ function defaultManifestPermit() {
 }
 
 function parseTrackingCode(value = "", defaultPrefix = "") {
-  const compact = String(value).trim().toUpperCase().replace(/[\s-]/g, "");
+  const compact = normalizeTrackingDigits(value);
   const prefix = String(defaultPrefix || "").toUpperCase();
   if (!compact) return ["", "", "", ""];
   const full = compact.match(/^([A-Z]{2})([0-9๐-๙]{8})([0-9๐-๙])([A-Z]{2})$/);
@@ -843,6 +843,16 @@ function parseTrackingCode(value = "", defaultPrefix = "") {
   const shortNumber = compact.match(/^([0-9๐-๙]+)$/);
   if (shortNumber) return [prefix, shortNumber[1], "", "TH"];
   return ["", compact, "", ""];
+}
+
+function normalizeTrackingDigits(value = "") {
+  return String(value).trim().toUpperCase().replace(/[\s-]/g, "").replace(/^[A-Z]{2}/, "").replace(/[A-Z]{2}$/, "").replace(/[^0-9๐-๙]/g, "").slice(0, 9);
+}
+
+function limitTrackingInput(event) {
+  const cleaned = normalizeTrackingDigits(event.target.value);
+  if (event.target.value !== cleaned) event.target.value = cleaned;
+  event.target.setCustomValidity("");
 }
 
 function manifestRecipientLabel(item) {
@@ -1590,10 +1600,13 @@ function openManifestDialog() {
       <td>${index + 1}</td>
       <td><div class="manifest-recipient-name">${escapeHtml(name)}</div>${subText ? `<div class="manifest-recipient-sub">${escapeHtml(subText)}</div>` : ""}</td>
       <td>${escapeHtml(item.postalCode || "")}</td>
-      <td><input name="registered-${escapeHtml(item.id)}" type="text" inputmode="numeric" autocomplete="off" placeholder="กรอกเฉพาะตัวเลข" /></td>
-      <td><input name="ems-${escapeHtml(item.id)}" type="text" inputmode="numeric" autocomplete="off" placeholder="กรอกเฉพาะตัวเลข" /></td>
+      <td><input name="registered-${escapeHtml(item.id)}" class="tracking-input" type="text" inputmode="numeric" autocomplete="off" maxlength="9" pattern="[0-9๐-๙]{9}" title="กรอกตัวเลข 9 หลัก" placeholder="ตัวเลข 9 หลัก" /></td>
+      <td><input name="ems-${escapeHtml(item.id)}" class="tracking-input" type="text" inputmode="numeric" autocomplete="off" maxlength="9" pattern="[0-9๐-๙]{9}" title="กรอกตัวเลข 9 หลัก" placeholder="ตัวเลข 9 หลัก" /></td>
     </tr>`;
   }).join("");
+  elements.manifestRows.querySelectorAll(".tracking-input").forEach((input) => {
+    input.addEventListener("input", limitTrackingInput);
+  });
   elements.mailingManifestDialog.showModal();
 }
 
@@ -1611,6 +1624,13 @@ function printMailingManifest(event) {
   }
 
   const form = new FormData(elements.mailingManifestForm);
+  const invalidTrackingInput = [...elements.manifestRows.querySelectorAll(".tracking-input")]
+    .find((input) => input.value.trim() && normalizeTrackingDigits(input.value).length !== 9);
+  if (invalidTrackingInput) {
+    invalidTrackingInput.setCustomValidity("กรุณากรอกตัวเลข 9 หลัก");
+    invalidTrackingInput.reportValidity();
+    return;
+  }
   const manifestDate = formatThaiLongDate(form.get("manifestDate"));
   const permit = String(form.get("manifestPermit") || "").trim();
   const rows = recipients.map((item, index) => ({
