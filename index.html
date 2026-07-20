@@ -363,6 +363,8 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
               <label class="paper-size-option"><span>ขนาดซอง / กระดาษ</span><select id="paperSize"><option value="DL">ซอง DL · 22 × 11 ซม.</option><option value="C5">ซอง C5 · 22.9 × 16.2 ซม.</option><option value="A4">กระดาษ A4 แนวตั้ง · 21 × 29.7 ซม.</option><option value="A4L">กระดาษ A4 แนวนอน · 29.7 × 21 ซม.</option></select><small class="paper-profile-hint">จำฟอนต์และตำแหน่งแยกให้แต่ละขนาดอัตโนมัติ</small></label>
               <label class="recipient-font-option"><span>ขนาดฟอนต์ข้อมูลผู้รับ (พอยต์)</span><input id="recipientFontPt" type="number" min="8" max="24" step="0.5" /></label>
               <button class="sender-settings-button" id="openRecipientLayoutSettings" type="button">✎ ปรับตำแหน่งและระยะผู้รับ</button>
+              <label class="garuda-option"><input id="showRecipientDepartment" type="checkbox" checked /><span>แสดงชื่อหน่วยงานผู้รับ</span></label>
+              <label class="garuda-option"><input id="showRecipientAddress" type="checkbox" checked /><span>แสดงที่อยู่ผู้รับ</span></label>
               <label class="garuda-option"><input id="showSender" type="checkbox" checked /><span>แสดงข้อมูลผู้ส่ง</span></label>
               <label class="garuda-option"><input id="showGaruda" type="checkbox" checked /><span>แสดงตราครุฑ</span></label>
               <label class="garuda-option"><input id="showPostagePermit" type="checkbox" checked /><span>แสดงกรอบฝากส่ง</span></label>
@@ -486,6 +488,8 @@ window.ENVELOPE_APP_CONFIG = {
   recipientTopPercent: 40,
   recipientLeftPercent: 42,
   recipientLineHeight: 1.5,
+  showRecipientDepartment: true,
+  showRecipientAddress: true,
   showPostagePermit: true,
   postagePermitText: "ชำระค่าฝากส่งเป็นรายเดือน\nใบอนุญาตเลขที่ xx/xxx\nไปรษณีย์เดชาวุธ",
   postagePermitTopMm: 7,
@@ -579,6 +583,8 @@ const state = {
     paperSize: initialPaperSize,
     paperLayouts: initialPaperLayouts,
     garudaImage: resolveAssetUrl(defaults.garudaImage),
+    showRecipientDepartment: savedSettings.showRecipientDepartment !== undefined ? Boolean(savedSettings.showRecipientDepartment) : defaults.showRecipientDepartment !== false,
+    showRecipientAddress: savedSettings.showRecipientAddress !== undefined ? Boolean(savedSettings.showRecipientAddress) : defaults.showRecipientAddress !== false,
     showSender: savedSettings.showSender !== undefined ? Boolean(savedSettings.showSender) : defaults.showSender !== false,
     showGaruda: savedSettings.showGaruda !== undefined ? Boolean(savedSettings.showGaruda) : defaults.showGaruda !== false,
     showPostagePermit: savedSettings.showPostagePermit !== undefined ? Boolean(savedSettings.showPostagePermit) : defaults.showPostagePermit !== false,
@@ -620,6 +626,8 @@ const elements = {
   previewPrevious: $("#previewPrevious"),
   previewNext: $("#previewNext"),
   previewCounter: $("#previewCounter"),
+  showRecipientDepartment: $("#showRecipientDepartment"),
+  showRecipientAddress: $("#showRecipientAddress"),
   showSender: $("#showSender"),
   showGaruda: $("#showGaruda"),
   showPostagePermit: $("#showPostagePermit"),
@@ -722,6 +730,11 @@ function recipientName(item) {
   return name || item.position || item.department || "ไม่ระบุชื่อผู้รับ";
 }
 
+function recipientEnvelopeName(item) {
+  const name = `${item.prefix}${item.firstName} ${item.lastName}`.trim();
+  return name || item.position || (state.settings.showRecipientDepartment ? item.department : "") || "ไม่ระบุชื่อผู้รับ";
+}
+
 function recipientFullAddress(item) {
   return [
     item.address1,
@@ -756,7 +769,7 @@ function setNotice(message) {
 function persistSettings() {
   rememberCurrentPaperLayout();
   const keys = [
-    "sender", "senderAddress", "documentNumber", "paperSize", "paperLayouts", "showSender", "showGaruda", "showPostagePermit",
+    "sender", "senderAddress", "documentNumber", "paperSize", "paperLayouts", "showRecipientDepartment", "showRecipientAddress", "showSender", "showGaruda", "showPostagePermit",
     "garudaPlacement", "garudaSizeMm", "garudaStandardVersion", "senderTopMm", "senderLeftMm", "senderTextOffsetMm", "senderFontPt", "recipientFontPt",
     "recipientTopPercent", "recipientLeftPercent", "recipientLineHeight",
     "postagePermitText", "postagePermitTopMm", "postagePermitRightMm", "postagePermitFontPt",
@@ -884,6 +897,8 @@ function renderSummary() {
     A4L: "กระดาษ A4 แนวนอน",
   };
   elements.paperLabel.textContent = paperLabels[state.settings.paperSize] || paperLabels.DL;
+  elements.showRecipientDepartment.checked = state.settings.showRecipientDepartment;
+  elements.showRecipientAddress.checked = state.settings.showRecipientAddress;
   elements.showSender.checked = state.settings.showSender;
   elements.showGaruda.checked = state.settings.showGaruda;
   elements.showPostagePermit.checked = state.settings.showPostagePermit;
@@ -949,7 +964,14 @@ function renderSummary() {
       formatAddressArea("อำเภอ", previewRecipient.district),
     ].filter(Boolean).join(" ");
     const previewProvince = formatAddressArea("จังหวัด", previewRecipient.province);
-    receiverPreview.innerHTML = `<small>เรียน</small><h1>${escapeHtml(recipientName(previewRecipient))}</h1>${previewRecipient.position && recipientName(previewRecipient) !== previewRecipient.position ? `<p>${escapeHtml(previewRecipient.position)}</p>` : ""}${previewRecipient.department ? `<p class="organization">${escapeHtml(previewRecipient.department)}</p>` : ""}<p>${escapeHtml(previewRecipient.address1)}</p><p>${escapeHtml(previewLocality)}</p><p>${escapeHtml(previewProvince)}</p>${previewRecipient.postalCode ? `<p class="postal-code">${escapeHtml(previewRecipient.postalCode)}</p>` : ""}`;
+    const previewRecipientName = recipientEnvelopeName(previewRecipient);
+    const previewDepartmentHtml = state.settings.showRecipientDepartment && previewRecipient.department && previewRecipientName !== previewRecipient.department
+      ? `<p class="organization">${escapeHtml(previewRecipient.department)}</p>`
+      : "";
+    const previewAddressHtml = state.settings.showRecipientAddress
+      ? `<p>${escapeHtml(previewRecipient.address1)}</p><p>${escapeHtml(previewLocality)}</p><p>${escapeHtml(previewProvince)}</p>${previewRecipient.postalCode ? `<p class="postal-code">${escapeHtml(previewRecipient.postalCode)}</p>` : ""}`
+      : "";
+    receiverPreview.innerHTML = `<small>เรียน</small><h1>${escapeHtml(previewRecipientName)}</h1>${previewRecipient.position && previewRecipientName !== previewRecipient.position ? `<p>${escapeHtml(previewRecipient.position)}</p>` : ""}${previewDepartmentHtml}${previewAddressHtml}`;
   } else {
     receiverPreview.innerHTML = "<small>เรียน</small><h1>เลือกผู้รับเพื่อดูตัวอย่าง</h1>";
   }
@@ -1375,7 +1397,14 @@ function printEnvelopes() {
       formatAddressArea("อำเภอ", item.district),
     ].filter(Boolean).join(" ");
     const province = formatAddressArea("จังหวัด", item.province);
-    return `<section class="envelope">${senderBlockHtml}${postagePermitBlockHtml}<div class="recipient"><small>เรียน</small><h1>${escapeHtml(recipientName(item))}</h1>${item.position && recipientName(item) !== item.position ? `<p>${escapeHtml(item.position)}</p>` : ""}${item.department ? `<p class="organization">${escapeHtml(item.department)}</p>` : ""}<p>${escapeHtml(item.address1)}</p><p>${escapeHtml(locality)}</p><p>${escapeHtml(province)}</p>${item.postalCode ? `<p class="postal-code"><strong>${escapeHtml(item.postalCode)}</strong></p>` : ""}</div></section>`;
+    const envelopeRecipientName = recipientEnvelopeName(item);
+    const recipientDepartmentHtml = state.settings.showRecipientDepartment && item.department && envelopeRecipientName !== item.department
+      ? `<p class="organization">${escapeHtml(item.department)}</p>`
+      : "";
+    const recipientAddressHtml = state.settings.showRecipientAddress
+      ? `<p>${escapeHtml(item.address1)}</p><p>${escapeHtml(locality)}</p><p>${escapeHtml(province)}</p>${item.postalCode ? `<p class="postal-code"><strong>${escapeHtml(item.postalCode)}</strong></p>` : ""}`
+      : "";
+    return `<section class="envelope">${senderBlockHtml}${postagePermitBlockHtml}<div class="recipient"><small>เรียน</small><h1>${escapeHtml(envelopeRecipientName)}</h1>${item.position && envelopeRecipientName !== item.position ? `<p>${escapeHtml(item.position)}</p>` : ""}${recipientDepartmentHtml}${recipientAddressHtml}</div></section>`;
   }).join("");
   const popup = window.open("", "_blank");
   if (!popup) {
@@ -1427,6 +1456,18 @@ elements.recipientFont.addEventListener("change", (event) => {
   persistSettings();
   renderSummary();
   setNotice(`ตั้งขนาดฟอนต์ผู้รับเป็น ${state.settings.recipientFontPt} พอยต์แล้ว`);
+});
+elements.showRecipientDepartment.addEventListener("change", (event) => {
+  state.settings.showRecipientDepartment = event.target.checked;
+  persistSettings();
+  renderSummary();
+  setNotice(state.settings.showRecipientDepartment ? "เปิดการแสดงชื่อหน่วยงานผู้รับแล้ว" : "ซ่อนชื่อหน่วยงานผู้รับแล้ว");
+});
+elements.showRecipientAddress.addEventListener("change", (event) => {
+  state.settings.showRecipientAddress = event.target.checked;
+  persistSettings();
+  renderSummary();
+  setNotice(state.settings.showRecipientAddress ? "เปิดการแสดงที่อยู่ผู้รับแล้ว" : "ซ่อนที่อยู่ผู้รับสำหรับการนำส่งด้วยตนเองแล้ว");
 });
 elements.showSender.addEventListener("change", (event) => {
   state.settings.showSender = event.target.checked;
