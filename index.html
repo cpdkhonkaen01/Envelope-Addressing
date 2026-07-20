@@ -35,7 +35,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .icon-button{width:39px;height:39px;border:1px solid #e3e7ef;border-radius:12px;background:#fff;color:#475467}
 .workspace{width:min(1440px,92vw);margin:auto;padding:32px 0 54px}
 
-.hero{position:relative;display:grid;grid-template-columns:minmax(0,.9fr) minmax(480px,1.1fr);min-height:460px;overflow:hidden;border-radius:30px;background:linear-gradient(118deg,#f9fbff,#eef3ff 55%,#e8f5f2);box-shadow:var(--shadow)}
+.hero{position:relative;display:grid;grid-template-columns:minmax(0,.9fr) minmax(480px,1.1fr);min-height:460px;overflow:visible;padding-bottom:22px;border-radius:30px;background:linear-gradient(118deg,#f9fbff,#eef3ff 55%,#e8f5f2);box-shadow:var(--shadow)}
 .hero-copy{align-self:center;padding:50px 24px 52px 58px}
 .eyebrow{display:block;margin-bottom:8px;color:var(--blue);font-size:10px;font-weight:900;letter-spacing:.13em;text-transform:uppercase}
 .hero h1{margin:0;font-size:clamp(37px,4vw,58px);line-height:1.14;letter-spacing:-.04em}
@@ -98,6 +98,9 @@ tbody tr.selected-row{background:#f5f8ff;box-shadow:inset 3px 0 0 var(--blue)}
 td strong,td small{display:block}
 td strong{margin-bottom:2px;color:#263149;font-size:11px}
 td small{color:#8a94a5;font-size:9px}
+.recipient-name-cell{min-width:280px;max-width:420px}
+.recipient-name-cell strong{white-space:normal;word-break:break-word}
+.recipient-position-line{margin-top:4px;color:#667085;font-weight:700;line-height:1.45}
 .check-cell{width:42px;text-align:center}
 .sequence-cell{width:72px;text-align:center}
 .row-sequence{display:inline-grid;min-width:32px;height:32px;place-items:center;border-radius:10px;background:#eef3ff;color:var(--blue-deep);font-weight:900}
@@ -889,10 +892,14 @@ function renderRows() {
   elements.rows.innerHTML = rows.map((item, index) => {
     const checked = state.selected.has(item.id);
     const classification = [item.responsibleUnit, item.cooperativeType].filter(Boolean).join(" · ");
+    const displayName = recipientName(item);
+    const positionLine = item.position && item.position !== displayName
+      ? `<small class="recipient-position-line">${escapeHtml(item.position)}</small>`
+      : "";
     return `<tr class="${checked ? "selected-row" : ""}">
       <td class="check-cell"><input class="recipient-check" data-id="${escapeHtml(item.id)}" type="checkbox" ${checked ? "checked" : ""} aria-label="เลือก ${escapeHtml(recipientName(item))}"></td>
       <td class="sequence-cell"><span class="row-sequence">${index + 1}</span></td>
-      <td><strong>${escapeHtml(recipientName(item))}</strong></td>
+      <td class="recipient-name-cell"><strong>${escapeHtml(displayName)}</strong>${positionLine}</td>
       <td><span class="category-badge ${categoryClass(item.category)}">${escapeHtml(item.category)}</span></td>
       <td><span class="department-text">${escapeHtml(item.department || (item.category === "บุคคล" ? "บุคคล" : "ไม่ระบุหน่วยงาน"))}</span>${classification ? `<small class="recipient-classification">${escapeHtml(classification)}</small>` : ""}</td>
       <td><span class="address-text">${escapeHtml(recipientFullAddress(item))}</span></td>
