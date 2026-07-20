@@ -362,6 +362,7 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
             <div class="print-controls">
               <label class="paper-size-option"><span>ขนาดซอง / กระดาษ</span><select id="paperSize"><option value="DL">ซอง DL · 22 × 11 ซม.</option><option value="C5">ซอง C5 · 22.9 × 16.2 ซม.</option><option value="A4L">กระดาษ A4 แนวนอน · 29.7 × 21 ซม.</option></select><small class="paper-profile-hint">จำฟอนต์และตำแหน่งแยกให้แต่ละขนาดอัตโนมัติ</small></label>
               <label class="recipient-font-option"><span>ขนาดฟอนต์ข้อมูลผู้รับ (พอยต์)</span><input id="recipientFontPt" type="number" min="8" max="24" step="0.5" /></label>
+              <label class="recipient-font-option"><span>จำนวนซองต่อรายชื่อ</span><input id="envelopeCopies" type="number" min="1" max="20" step="1" value="1" /></label>
               <button class="sender-settings-button" id="openRecipientLayoutSettings" type="button">✎ ปรับตำแหน่งและระยะผู้รับ</button>
               <label class="garuda-option"><input id="showRecipientDepartment" type="checkbox" checked /><span>แสดงชื่อหน่วยงานผู้รับ</span></label>
               <label class="garuda-option"><input id="showRecipientAddress" type="checkbox" checked /><span>แสดงที่อยู่ผู้รับ</span></label>
@@ -621,6 +622,7 @@ const state = {
     senderAddress: savedSettings.senderAddress || defaults.senderAddress || "เลขที่ 1/112 หมู่ที่ 13 ถนนหน้าเมือง ตำบลในเมือง\nอำเภอเมือง จังหวัดขอนแก่น 40000",
     documentNumber: savedSettings.documentNumber ?? defaults.documentNumber ?? "",
     paperSize: initialPaperSize,
+    envelopeCopies: Math.floor(clampNumber(savedSettings.envelopeCopies ?? defaults.envelopeCopies, 1, 20, 1)),
     paperLayouts: initialPaperLayouts,
     garudaImage: resolveAssetUrl(defaults.garudaImage),
     showRecipientDepartment: savedSettings.showRecipientDepartment !== undefined ? Boolean(savedSettings.showRecipientDepartment) : defaults.showRecipientDepartment !== false,
@@ -670,6 +672,7 @@ const elements = {
   empty: $("#emptyState"),
   paper: $("#paperSize"),
   recipientFont: $("#recipientFontPt"),
+  envelopeCopies: $("#envelopeCopies"),
   previewPrevious: $("#previewPrevious"),
   previewNext: $("#previewNext"),
   previewCounter: $("#previewCounter"),
@@ -901,7 +904,7 @@ function setNotice(message) {
 function persistSettings() {
   rememberCurrentPaperLayout();
   const keys = [
-    "sender", "senderAddress", "documentNumber", "paperSize", "paperLayouts", "showRecipientDepartment", "showRecipientAddress", "showSender", "showGaruda", "showPostagePermit",
+    "sender", "senderAddress", "documentNumber", "paperSize", "envelopeCopies", "paperLayouts", "showRecipientDepartment", "showRecipientAddress", "showSender", "showGaruda", "showPostagePermit",
     "garudaPlacement", "garudaSizeMm", "garudaStandardVersion", "senderTopMm", "senderLeftMm", "senderTextOffsetMm", "senderFontPt", "recipientFontPt",
     "recipientTopPercent", "recipientLeftPercent", "recipientLineHeight",
     "postagePermitText", "postagePermitTopMm", "postagePermitRightMm", "postagePermitFontPt",
@@ -1040,6 +1043,7 @@ function renderSummary() {
   elements.sideSelected.textContent = selectedCount;
   elements.paper.value = state.settings.paperSize;
   elements.recipientFont.value = state.settings.recipientFontPt;
+  elements.envelopeCopies.value = state.settings.envelopeCopies;
   const paperLabels = {
     DL: "ซอง DL",
     C5: "ซอง C5",
@@ -1736,6 +1740,9 @@ function printEnvelopes() {
     setNotice("โปรดเลือกรายชื่อผู้รับอย่างน้อย 1 รายการ");
     return;
   }
+  const envelopeCopies = Math.floor(clampNumber(elements.envelopeCopies?.value ?? state.settings.envelopeCopies, 1, 20, 1));
+  state.settings.envelopeCopies = envelopeCopies;
+  persistSettings();
   const sizes = {
     DL: ["220mm", "110mm", "ซอง DL"],
     C5: ["229mm", "162mm", "ซอง C5"],
@@ -1771,7 +1778,8 @@ function printEnvelopes() {
   const postagePermitBlockHtml = state.settings.showPostagePermit
     ? `<div class="postage-permit">${postagePermitHtml}</div>`
     : "";
-  const pages = recipients.map((item) => {
+  const printRecipients = recipients.flatMap((item) => Array.from({ length: envelopeCopies }, () => item));
+  const pages = printRecipients.map((item) => {
     const locality = [
       formatAddressArea("ตำบล", item.subdistrict),
       formatAddressArea("อำเภอ", item.district),
@@ -1796,7 +1804,7 @@ function printEnvelopes() {
   popup.opener = null;
   popup.document.write(`<!doctype html><html lang="th"><head><meta charset="utf-8"><title>พิมพ์จ่าหน้าซอง</title><style>@page{size:${width} ${height};margin:0}*{box-sizing:border-box}body{margin:0;color:#17223b;font-family:"Noto Sans Thai",Tahoma,sans-serif}.envelope{position:relative;width:${width};height:${height};page-break-after:always;overflow:hidden;background:#fff}.envelope:last-child{page-break-after:auto}.sender{position:absolute;top:${senderTopMm}mm;left:${senderLeftMm}mm;width:55%;font-size:${senderFontPt}pt;line-height:1.45;color:#111}.sender-content{min-width:0}.sender-address{margin-top:.7mm}.document-number{margin-top:1.2mm;font-weight:700}.garuda{display:block;width:auto;height:${garudaSizeMm}mm;object-fit:contain;object-position:left top}.garuda-hidden{visibility:hidden}.sender.garuda-left{display:flex;align-items:flex-start;gap:3mm}.garuda-left .garuda{flex:0 0 auto}.garuda-left .sender-content{padding-top:${senderTextOffsetMm}mm}.garuda-above .garuda{margin:0 0 2mm 0}.postage-permit{position:absolute;top:${postagePermitTopMm}mm;right:${postagePermitRightMm}mm;display:flex;width:50mm;height:25mm;align-items:center;justify-content:center;overflow:hidden;padding:2mm;border:.35mm solid #111;color:#111;font-size:${postagePermitFontPt}pt;font-weight:700;line-height:1.45;text-align:center}.recipient{position:absolute;left:${recipientLeftPercent}%;top:${recipientTopPercent}%;width:calc(100% - ${recipientLeftPercent}% - 8mm);font-size:${recipientFontPt}pt;line-height:${recipientLineHeight}}.recipient small{color:#667085;font-size:${recipientFontPt}pt}.recipient h1{margin:1mm 0 0;font-size:${recipientFontPt}pt;white-space:nowrap}.recipient-position{white-space:nowrap}.recipient p{margin:.4mm 0}.organization{font-weight:700}@media screen{body{background:#eef2f7;padding:18px}.envelope{margin:0 auto 18px;box-shadow:0 12px 36px rgba(15,23,42,.14)}}</style></head><body>${pages}<script>addEventListener('load',()=>setTimeout(()=>print(),250));<\/script></body></html>`);
   popup.document.close();
-  setNotice(`เตรียมพิมพ์ ${recipients.length} รายการ บน${label}`);
+  setNotice(`เตรียมพิมพ์ ${printRecipients.length} ซอง (${recipients.length} รายชื่อ × ${envelopeCopies} ฉบับ) บน${label}`);
 }
 
 elements.search.addEventListener("input", (event) => {
@@ -1843,6 +1851,12 @@ elements.recipientFont.addEventListener("change", (event) => {
   persistSettings();
   renderSummary();
   setNotice(`ตั้งขนาดฟอนต์ผู้รับเป็น ${state.settings.recipientFontPt} พอยต์แล้ว`);
+});
+elements.envelopeCopies.addEventListener("change", (event) => {
+  state.settings.envelopeCopies = Math.floor(clampNumber(event.target.value, 1, 20, 1));
+  persistSettings();
+  renderSummary();
+  setNotice(`ตั้งจำนวนซองต่อรายชื่อเป็น ${state.settings.envelopeCopies} ฉบับแล้ว`);
 });
 elements.showRecipientDepartment.addEventListener("change", (event) => {
   state.settings.showRecipientDepartment = event.target.checked;
