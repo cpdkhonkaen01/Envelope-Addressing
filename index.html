@@ -198,6 +198,9 @@ dialog hr{height:1px;margin:20px 0 4px;border:0;background:#edf0f5}
 .manifest-entry-table th:nth-child(3),.manifest-entry-table td:nth-child(3){width:110px;text-align:center}
 .manifest-entry-table th:nth-child(4),.manifest-entry-table th:nth-child(5){width:180px}
 .manifest-entry-table input{width:100%;height:42px;padding:0 12px;border:1px solid #dfe4ed;border-radius:10px;background:#fff;color:var(--ink);font:inherit}
+.manifest-entry-table input:disabled{border-color:#edf0f5;background:#f3f5f8;color:#98a2b3}
+.manifest-entry-table td.tracking-locked::after{display:block;color:#98a2b3;font-size:11px;text-align:center;content:"ปิดใช้งาน"}
+.manifest-prefix-fields{margin-top:2px}
 .manifest-recipient-name{font-weight:800;color:#17223b}
 .manifest-recipient-sub{margin-top:3px;color:#667085;font-size:12px}
 .history-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:18px 0}
@@ -592,6 +595,10 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
           <label class="form-field"><span>วัน/เดือน/ปี ทำรายการ</span><input name="manifestDate" id="manifestDate" type="date" required /></label>
           <label class="form-field"><span>ใบอนุญาต/ไปรษณีย์</span><input name="manifestPermit" id="manifestPermit" type="text" value="ใบอนุญาตเลขที่ 3/2521 ไปรษณีย์เทพารักษ์" readonly /></label>
         </div>
+        <div class="form-grid equal manifest-prefix-fields">
+          <label class="form-field"><span>ล็อกเลขนำหน้าลงทะเบียน 6 หลัก</span><input id="manifestRegisteredPrefix" type="text" inputmode="numeric" autocomplete="off" maxlength="6" pattern="[0-9๐-๙]{6}" placeholder="เช่น 002350" /><small>เมื่อกรอกครบ 6 หลัก แต่ละแถวกรอกเฉพาะ 3 ตัวท้าย</small></label>
+          <label class="form-field"><span>ล็อกเลขนำหน้า EMS 6 หลัก</span><input id="manifestEmsPrefix" type="text" inputmode="numeric" autocomplete="off" maxlength="6" pattern="[0-9๐-๙]{6}" placeholder="เช่น 122386" /><small>เมื่อกรอกครบ 6 หลัก แต่ละแถวกรอกเฉพาะ 3 ตัวท้าย</small></label>
+        </div>
         <div class="manifest-table-wrap">
           <table class="manifest-entry-table">
             <thead><tr><th>ลำดับ</th><th>ผู้รับ</th><th>ปลายทาง</th><th>ลงทะเบียน</th><th>EMS</th></tr></thead>
@@ -812,6 +819,8 @@ const state = {
     recipientNameBreaksById: savedSettings.recipientNameBreaksById && typeof savedSettings.recipientNameBreaksById === "object"
       ? { ...savedSettings.recipientNameBreaksById }
       : {},
+    manifestRegisteredPrefix: normalizeTrackingDigits(savedSettings.manifestRegisteredPrefix || "").slice(0, 6),
+    manifestEmsPrefix: normalizeTrackingDigits(savedSettings.manifestEmsPrefix || "").slice(0, 6),
     paperLayouts: initialPaperLayouts,
     garudaImage: resolveAssetUrl(defaults.garudaImage),
     showRecipientDepartment: savedSettings.showRecipientDepartment !== undefined ? Boolean(savedSettings.showRecipientDepartment) : defaults.showRecipientDepartment !== false,
@@ -895,6 +904,8 @@ const elements = {
   manifestRows: $("#manifestRows"),
   manifestDate: $("#manifestDate"),
   manifestPermit: $("#manifestPermit"),
+  manifestRegisteredPrefix: $("#manifestRegisteredPrefix"),
+  manifestEmsPrefix: $("#manifestEmsPrefix"),
   printHistoryDialog: $("#printHistoryDialog"),
   printHistoryList: $("#printHistoryList"),
   historyGroupFilter: $("#historyGroupFilter"),
@@ -969,8 +980,8 @@ function collectManifestTracking() {
   const tracking = {};
   if (elements.manifestRows?.dataset.printJobId !== state.currentPrintJobId) return tracking;
   elements.manifestRows?.querySelectorAll("tr[data-job-key]").forEach((row) => {
-    const registered = row.querySelector('[name^="registered-"]')?.value || "";
-    const ems = row.querySelector('[name^="ems-"]')?.value || "";
+    const registered = fullManifestTrackingValue(row.querySelector('[name^="registered-"]'));
+    const ems = fullManifestTrackingValue(row.querySelector('[name^="ems-"]'));
     if (registered || ems) tracking[row.dataset.jobKey] = { registered, ems };
   });
   return tracking;
@@ -1486,7 +1497,9 @@ function parseTrackingCode(value = "", defaultPrefix = "") {
 function formatTrackingCode(value = "", defaultPrefix = "") {
   const digits = normalizeTrackingDigits(value);
   if (!digits) return "";
-  return `${String(defaultPrefix || "").toUpperCase()} ${digits} TH`;
+  const firstEight = digits.slice(0, 8);
+  const checkDigit = digits.slice(8, 9);
+  return `${String(defaultPrefix || "").toUpperCase()} ${firstEight}${checkDigit ? ` ${checkDigit}` : ""} TH`;
 }
 
 function normalizeTrackingDigits(value = "") {
@@ -1494,9 +1507,89 @@ function normalizeTrackingDigits(value = "") {
 }
 
 function limitTrackingInput(event) {
-  const cleaned = normalizeTrackingDigits(event.target.value);
+  const maxLength = event.target.maxLength > 0 ? event.target.maxLength : 9;
+  const cleaned = normalizeTrackingDigits(event.target.value).slice(0, maxLength);
   if (event.target.value !== cleaned) event.target.value = cleaned;
   event.target.setCustomValidity("");
+}
+
+function manifestPrefixForInput(input) {
+  const prefixInput = input?.dataset.trackingType === "ems"
+    ? elements.manifestEmsPrefix
+    : elements.manifestRegisteredPrefix;
+  const prefix = normalizeTrackingDigits(prefixInput?.value || "").slice(0, 6);
+  return prefix.length === 6 ? prefix : "";
+}
+
+function fullManifestTrackingValue(input) {
+  if (!input) return "";
+  const value = normalizeTrackingDigits(input.value);
+  const prefix = manifestPrefixForInput(input);
+  return prefix && value ? `${prefix}${value.slice(0, 3)}` : value;
+}
+
+function manifestTrackingEntryValue(savedValue = "", prefix = "") {
+  const digits = normalizeTrackingDigits(savedValue);
+  const lockedPrefix = normalizeTrackingDigits(prefix).slice(0, 6);
+  return lockedPrefix.length === 6 && digits.startsWith(lockedPrefix) ? digits.slice(6, 9) : digits;
+}
+
+function updateManifestRowTrackingState(row, activeInput = null) {
+  if (!row) return;
+  const registered = row.querySelector('[data-tracking-type="registered"]');
+  const ems = row.querySelector('[data-tracking-type="ems"]');
+  if (!registered || !ems) return;
+  if (activeInput && activeInput.value.trim()) {
+    const other = activeInput === registered ? ems : registered;
+    other.value = "";
+  }
+  const hasRegistered = Boolean(registered.value.trim());
+  const hasEms = Boolean(ems.value.trim());
+  registered.disabled = hasEms;
+  ems.disabled = hasRegistered;
+  registered.closest("td")?.classList.toggle("tracking-locked", hasEms);
+  ems.closest("td")?.classList.toggle("tracking-locked", hasRegistered);
+}
+
+function focusNextManifestTrackingInput(input) {
+  if (!input || input.maxLength !== 3 || normalizeTrackingDigits(input.value).length !== 3) return;
+  const type = input.dataset.trackingType;
+  const inputs = [...elements.manifestRows.querySelectorAll(`[data-tracking-type="${type}"]`)];
+  const next = inputs.slice(inputs.indexOf(input) + 1).find((candidate) => !candidate.disabled);
+  if (next) {
+    next.focus();
+    next.select();
+  }
+}
+
+function applyManifestPrefixMode(type) {
+  const prefixInput = type === "ems" ? elements.manifestEmsPrefix : elements.manifestRegisteredPrefix;
+  const prefix = normalizeTrackingDigits(prefixInput.value).slice(0, 6);
+  prefixInput.value = prefix;
+  state.settings[type === "ems" ? "manifestEmsPrefix" : "manifestRegisteredPrefix"] = prefix;
+  elements.manifestRows.querySelectorAll(`[data-tracking-type="${type}"]`).forEach((input) => {
+    const previousPrefix = input.dataset.lockedPrefix || "";
+    let value = normalizeTrackingDigits(input.value);
+    if (prefix.length === 6) {
+      if (value.length === 9 && value.startsWith(prefix)) value = value.slice(6);
+      else if (value.length > 3) value = value.slice(-3);
+      input.maxLength = 3;
+      input.pattern = "[0-9๐-๙]{3}";
+      input.placeholder = "3 ตัวท้าย";
+      input.title = `กรอก 3 ตัวท้าย ต่อจาก ${prefix}`;
+    } else {
+      if (value && value.length <= 3 && previousPrefix.length === 6) value = `${previousPrefix}${value}`;
+      input.maxLength = 9;
+      input.pattern = "[0-9๐-๙]{9}";
+      input.placeholder = "ตัวเลข 9 หลัก";
+      input.title = "กรอกตัวเลข 9 หลัก";
+    }
+    input.value = value.slice(0, input.maxLength);
+    input.dataset.lockedPrefix = prefix;
+    updateManifestRowTrackingState(input.closest("tr"));
+  });
+  persistSettings();
+  saveCurrentPrintJobDraft();
 }
 
 function manifestRecipientLabel(item) {
@@ -1543,7 +1636,7 @@ function persistSettings() {
   const keys = [
     "sender", "senderAddress", "documentNumber", "paperSize", "paperLayouts", "printJobCreator", "recipientNameBreaksById", "showRecipientDepartment", "showRecipientAddress", "showSender", "showGaruda", "showPostagePermit",
     "garudaPlacement", "garudaSizeMm", "garudaStandardVersion", "senderTopMm", "senderLeftMm", "senderTextOffsetMm", "senderFontPt", "recipientFontPt",
-    "recipientTopPercent", "recipientLeftPercent", "recipientLineHeight",
+    "recipientTopPercent", "recipientLeftPercent", "recipientLineHeight", "manifestRegisteredPrefix", "manifestEmsPrefix",
     "postagePermitText", "postagePermitTopMm", "postagePermitRightMm", "postagePermitFontPt",
   ];
   const saved = Object.fromEntries(keys.map((key) => [key, state.settings[key]]));
@@ -2466,24 +2559,39 @@ function openManifestDialog() {
   const job = saveCurrentPrintJobDraft({}, { force: true });
   elements.manifestDate.value = job?.manifestDate || localIsoDate();
   elements.manifestPermit.value = defaultManifestPermit();
+  elements.manifestRegisteredPrefix.value = state.settings.manifestRegisteredPrefix || "";
+  elements.manifestEmsPrefix.value = state.settings.manifestEmsPrefix || "";
+  const registeredPrefix = normalizeTrackingDigits(elements.manifestRegisteredPrefix.value).slice(0, 6);
+  const emsPrefix = normalizeTrackingDigits(elements.manifestEmsPrefix.value).slice(0, 6);
+  const registeredUsesPrefix = registeredPrefix.length === 6;
+  const emsUsesPrefix = emsPrefix.length === 6;
   elements.manifestRows.dataset.printJobId = job?.id || "";
   elements.manifestRows.innerHTML = jobs.map(({ item, copyIndex }, index) => {
     const name = manifestRecipientLabel(item);
     const subText = item.department && item.department !== name ? item.department : recipientFullAddress(item);
     const jobKey = printJobTrackingKey(item.id, copyIndex);
     const savedTracking = job?.tracking?.[jobKey] || {};
+    const savedRegistered = normalizeTrackingDigits(savedTracking.registered || "");
+    const savedEms = savedRegistered ? "" : normalizeTrackingDigits(savedTracking.ems || "");
+    const registeredValue = manifestTrackingEntryValue(savedRegistered, registeredPrefix);
+    const emsValue = manifestTrackingEntryValue(savedEms, emsPrefix);
     return `<tr data-recipient-id="${escapeHtml(item.id)}" data-job-key="${escapeHtml(jobKey)}">
       <td>${index + 1}</td>
       <td><div class="manifest-recipient-name">${escapeHtml(name)}</div>${subText ? `<div class="manifest-recipient-sub">${escapeHtml(subText)}</div>` : ""}</td>
       <td>${escapeHtml(item.postalCode || "")}</td>
-      <td><input name="registered-${index}" class="tracking-input" type="text" inputmode="numeric" autocomplete="off" maxlength="9" pattern="[0-9๐-๙]{9}" title="กรอกตัวเลข 9 หลัก" placeholder="ตัวเลข 9 หลัก" value="${escapeHtml(savedTracking.registered || "")}" /></td>
-      <td><input name="ems-${index}" class="tracking-input" type="text" inputmode="numeric" autocomplete="off" maxlength="9" pattern="[0-9๐-๙]{9}" title="กรอกตัวเลข 9 หลัก" placeholder="ตัวเลข 9 หลัก" value="${escapeHtml(savedTracking.ems || "")}" /></td>
+      <td><input name="registered-${index}" class="tracking-input" data-tracking-type="registered" data-locked-prefix="${escapeHtml(registeredUsesPrefix ? registeredPrefix : "")}" type="text" inputmode="numeric" autocomplete="off" maxlength="${registeredUsesPrefix ? 3 : 9}" pattern="[0-9๐-๙]{${registeredUsesPrefix ? 3 : 9}}" title="${registeredUsesPrefix ? `กรอก 3 ตัวท้าย ต่อจาก ${escapeHtml(registeredPrefix)}` : "กรอกตัวเลข 9 หลัก"}" placeholder="${registeredUsesPrefix ? "3 ตัวท้าย" : "ตัวเลข 9 หลัก"}" value="${escapeHtml(registeredValue)}" /></td>
+      <td><input name="ems-${index}" class="tracking-input" data-tracking-type="ems" data-locked-prefix="${escapeHtml(emsUsesPrefix ? emsPrefix : "")}" type="text" inputmode="numeric" autocomplete="off" maxlength="${emsUsesPrefix ? 3 : 9}" pattern="[0-9๐-๙]{${emsUsesPrefix ? 3 : 9}}" title="${emsUsesPrefix ? `กรอก 3 ตัวท้าย ต่อจาก ${escapeHtml(emsPrefix)}` : "กรอกตัวเลข 9 หลัก"}" placeholder="${emsUsesPrefix ? "3 ตัวท้าย" : "ตัวเลข 9 หลัก"}" value="${escapeHtml(emsValue)}" /></td>
     </tr>`;
   }).join("");
   elements.manifestRows.querySelectorAll(".tracking-input").forEach((input) => {
     input.addEventListener("input", limitTrackingInput);
-    input.addEventListener("input", () => saveCurrentPrintJobDraft());
+    input.addEventListener("input", () => {
+      updateManifestRowTrackingState(input.closest("tr"), input);
+      saveCurrentPrintJobDraft();
+      focusNextManifestTrackingInput(input);
+    });
   });
+  elements.manifestRows.querySelectorAll("tr[data-job-key]").forEach((row) => updateManifestRowTrackingState(row));
   elements.mailingManifestDialog.showModal();
 }
 
@@ -2504,22 +2612,27 @@ function printMailingManifest(event) {
 
   const form = new FormData(elements.mailingManifestForm);
   const invalidTrackingInput = [...elements.manifestRows.querySelectorAll(".tracking-input")]
-    .find((input) => input.value.trim() && normalizeTrackingDigits(input.value).length !== 9);
+    .find((input) => input.value.trim() && fullManifestTrackingValue(input).length !== 9);
   if (invalidTrackingInput) {
-    invalidTrackingInput.setCustomValidity("กรุณากรอกตัวเลข 9 หลัก");
+    const expected = manifestPrefixForInput(invalidTrackingInput) ? "3 ตัวท้าย" : "ตัวเลข 9 หลัก";
+    invalidTrackingInput.setCustomValidity(`กรุณากรอก${expected}ให้ครบ`);
     invalidTrackingInput.reportValidity();
     return;
   }
   const manifestDate = formatThaiLongDate(form.get("manifestDate"));
   const permit = LOCKED_MANIFEST_PERMIT;
   const receivingPostOffice = extractReceivingPostOffice(permit);
-  const rows = jobs.map(({ item }, index) => ({
-    index: index + 1,
-    name: manifestRecipientLabel(item),
-    destination: item.postalCode || "",
-    registered: formatTrackingCode(form.get(`registered-${index}`), "RJ"),
-    ems: formatTrackingCode(form.get(`ems-${index}`), "EQ"),
-  }));
+  const rows = jobs.map(({ item }, index) => {
+    const registeredInput = elements.manifestRows.querySelector(`[name="registered-${index}"]`);
+    const emsInput = elements.manifestRows.querySelector(`[name="ems-${index}"]`);
+    return {
+      index: index + 1,
+      name: manifestRecipientLabel(item),
+      destination: item.postalCode || "",
+      registered: formatTrackingCode(fullManifestTrackingValue(registeredInput), "RJ"),
+      ems: formatTrackingCode(fullManifestTrackingValue(emsInput), "EQ"),
+    };
+  });
   const pageSize = 30;
   const pages = [];
   for (let start = 0; start < rows.length; start += pageSize) {
@@ -2784,6 +2897,10 @@ $("#openManifestDialog").addEventListener("click", openManifestDialog);
 $("#closeManifestDialog").addEventListener("click", closeManifestDialog);
 $("#cancelManifestDialog").addEventListener("click", closeManifestDialog);
 elements.manifestDate.addEventListener("change", () => saveCurrentPrintJobDraft());
+elements.manifestRegisteredPrefix.addEventListener("input", limitTrackingInput);
+elements.manifestRegisteredPrefix.addEventListener("input", () => applyManifestPrefixMode("registered"));
+elements.manifestEmsPrefix.addEventListener("input", limitTrackingInput);
+elements.manifestEmsPrefix.addEventListener("input", () => applyManifestPrefixMode("ems"));
 elements.mailingManifestForm.addEventListener("submit", printMailingManifest);
 $("#openPrintHistory").addEventListener("click", openPrintHistory);
 $("#closePrintHistory").addEventListener("click", closePrintHistory);
