@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#2856d9" />
-    <meta name="description" content="ระบบจ่าหน้าซองจดหมายราชการจากข้อมูล Google Sheets" />
+    <meta name="description" content="ระบบจ่าหน้าซองจดหมายราชการจากฐานข้อมูล Supabase" />
     <title>ระบบจ่าหน้าซองจดหมายราชการ</title>
     <style id="app-styles">
 :root{--ink:#17223b;--muted:#667085;--blue:#2856d9;--blue-deep:#163aa5;--blue-soft:#eaf0ff;--green:#20a276;--green-soft:#e9f8f2;--amber:#e4a11b;--line:#e5e9f2;--page:#f5f7fb;--shadow:0 18px 52px rgba(37,55,91,.09)}
@@ -329,6 +329,7 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
       </a>
       <div class="top-actions">
         <span class="status-pill loading" id="connectionStatus"><i></i><span>กำลังเชื่อมฐานข้อมูล</span></span>
+        <button class="small-button" id="adminAuthButton" type="button">เข้าสู่ระบบผู้ดูแล</button>
       </div>
     </header>
 
@@ -337,7 +338,7 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
         <div class="hero-copy">
           <span class="eyebrow">งานสารบรรณที่ง่ายขึ้น</span>
           <h1>เลือกผู้รับ แล้วพิมพ์<br /><em>จ่าหน้าซองได้ทันที</em></h1>
-          <p>ค้นหารายชื่อจาก Google Sheets เลือกหลายหน่วยงาน และจัดหน้าพิมพ์ให้พอดีกับซองในไม่กี่คลิก</p>
+          <p>ค้นหารายชื่อจากฐานข้อมูลกลาง เลือกหลายหน่วยงาน และจัดหน้าพิมพ์ให้พอดีกับซองในไม่กี่คลิก</p>
           <div class="hero-actions">
             <button class="button primary" id="heroPrint" type="button">พิมพ์หน้าซองจดหมาย <b id="heroSelected">0</b></button>
             <button class="button secondary" id="openManifestDialog" type="button">พิมพ์ใบนำส่ง</button>
@@ -411,7 +412,7 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
     <dialog id="recipientDialog">
       <form id="recipientForm">
         <div class="dialog-title"><div><span class="eyebrow">ฐานข้อมูลผู้รับ</span><h2 id="recipientDialogTitle">เพิ่มรายชื่อผู้รับ</h2></div><button class="close-button" id="closeRecipientDialog" type="button" aria-label="ปิด">×</button></div>
-        <p class="dialog-info" id="recipientDialogInfo">ข้อมูลจะบันทึกลงชีต <strong>Recipients</strong> ผ่าน Google Apps Script โดยตรง</p>
+        <p class="dialog-info" id="recipientDialogInfo">ข้อมูลจะบันทึกลงฐานข้อมูลกลาง ต้องเข้าสู่ระบบผู้ดูแลก่อนเพิ่มหรือแก้ไขข้อมูล</p>
         <div class="form-grid equal single" id="categoryAndPrefixFields">
           <label class="form-field"><span>ประเภทผู้รับ *</span><select name="category" id="recipientCategory" required><option value="">เลือกประเภท</option><option value="หน่วยงานราชการ">หน่วยงานราชการ</option><option value="สหกรณ์และกลุ่มเกษตรกร">สหกรณ์และกลุ่มเกษตรกร</option><option value="ภาคเอกชน">ภาคเอกชน</option><option value="บุคคล">บุคคล</option></select></label>
           <label class="form-field" id="prefixField" hidden><span>คำนำหน้า</span><select name="prefix"><option value="">ไม่ระบุ</option><option value="นาย">นาย</option><option value="นาง">นาง</option><option value="นางสาว">นางสาว</option></select></label>
@@ -434,12 +435,9 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
           <label class="form-field"><span>อำเภอ / เขต</span><input name="district" type="text" /></label>
           <label class="form-field"><span>จังหวัด</span><input name="province" type="text" /></label>
         </div>
-        <div class="form-grid equal">
-          <label class="form-field"><span>รหัสไปรษณีย์</span><input name="postalCode" type="text" inputmode="text" autocomplete="postal-code" maxlength="5" pattern="[0-9๐-๙]{5}" title="กรุณากรอกรหัสไปรษณีย์ 5 หลัก เป็นเลขไทยหรือเลขอารบิก" /><small>ใส่ได้ทั้ง 40000 และ ๔๐๐๐๐</small></label>
-          <label class="form-field"><span>รหัสผู้ดูแล *</span><input name="adminKey" type="password" autocomplete="current-password" required /><small>รหัสนี้ตั้งไว้ใน Script Properties ชื่อ WRITE_KEY</small></label>
-        </div>
+        <label class="form-field"><span>รหัสไปรษณีย์</span><input name="postalCode" type="text" inputmode="text" autocomplete="postal-code" maxlength="5" pattern="[0-9๐-๙]{5}" title="กรุณากรอกรหัสไปรษณีย์ 5 หลัก เป็นเลขไทยหรือเลขอารบิก" /><small>ใส่ได้ทั้ง 40000 และ ๔๐๐๐๐</small></label>
         <p class="form-message" id="recipientFormMessage" role="status" aria-live="polite"></p>
-        <div class="dialog-actions split"><button class="button danger" id="deleteRecipientButton" type="button" hidden>ลบข้อมูลผู้รับ</button><div class="action-group"><button class="button secondary" id="cancelRecipient" type="button">ยกเลิก</button><button class="button primary" id="saveRecipient" type="submit">บันทึกลง Google Sheets</button></div></div>
+        <div class="dialog-actions split"><button class="button danger" id="deleteRecipientButton" type="button" hidden>ลบข้อมูลผู้รับ</button><div class="action-group"><button class="button secondary" id="cancelRecipient" type="button">ยกเลิก</button><button class="button primary" id="saveRecipient" type="submit">บันทึกข้อมูลผู้รับ</button></div></div>
       </form>
     </dialog>
 
@@ -447,9 +445,8 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
       <form id="deleteRecipientForm">
         <div class="confirm-icon">!</div>
         <div class="dialog-title confirm-title"><div><span class="eyebrow danger-text">ยืนยันการลบ</span><h2>ลบข้อมูลผู้รับ</h2></div><button class="close-button" id="closeDeleteRecipientDialog" type="button" aria-label="ปิด">×</button></div>
-        <p class="dialog-info danger-info">รายการนี้จะถูกลบออกจากฐานข้อมูล Google Sheets กรุณาตรวจสอบให้แน่ใจก่อนดำเนินการ</p>
+        <p class="dialog-info danger-info">รายการนี้จะถูกลบออกจากฐานข้อมูลกลาง กรุณาตรวจสอบให้แน่ใจก่อนดำเนินการ</p>
         <div class="delete-target" id="deleteRecipientName"></div>
-        <label class="form-field"><span>รหัสผู้ดูแล *</span><input name="adminKey" type="password" autocomplete="current-password" required /><small>ใช้รหัสเดียวกับตอนเพิ่มหรือแก้ไขข้อมูลผู้รับ</small></label>
         <p class="form-message" id="deleteRecipientMessage" role="status" aria-live="polite"></p>
         <div class="dialog-actions"><button class="button secondary" id="cancelDeleteRecipient" type="button">ยกเลิก</button><button class="button danger solid" id="confirmDeleteRecipient" type="submit">ยืนยันลบข้อมูล</button></div>
       </form>
@@ -540,24 +537,34 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
         <span class="history-save-status" id="historySaveStatus">บันทึกล่าสุดบนเครื่องนี้</span>
       </div>
       <div class="print-history-list" id="printHistoryList"></div>
-      <form class="history-sync-panel" id="historySyncForm">
+      <div class="history-sync-panel" id="historySyncPanel">
         <div>
-          <strong>สำรองประวัติไว้ใน Google Sheets</strong>
-          <small>กรอกรหัสผู้ดูแลครั้งเดียวต่อการเปิดเว็บ เพื่อให้ประวัติเปิดต่อจากเครื่องอื่นได้</small>
+          <strong>สำรองประวัติไว้ใน Supabase</strong>
+          <small id="historySyncHint">เข้าสู่ระบบผู้ดูแลเพื่อเปิดประวัติต่อจากเครื่องอื่นได้</small>
         </div>
-        <label class="form-field"><span>รหัสผู้ดูแล</span><input name="adminKey" type="password" autocomplete="current-password" required /></label>
-        <button class="button secondary" id="syncPrintHistory" type="submit">ซิงค์ประวัติ</button>
-      </form>
+        <button class="button secondary" id="syncPrintHistory" type="button">ซิงค์ประวัติ</button>
+      </div>
       <div class="dialog-actions"><button class="button secondary" id="donePrintHistory" type="button">ปิด</button></div>
     </dialog>
 
-    <!-- แก้ค่า appsScriptUrl ในส่วนนี้ได้โดยตรง -->
+    <dialog id="adminAuthDialog" class="confirm-dialog">
+      <form id="adminAuthForm">
+        <div class="dialog-title"><div><span class="eyebrow">เฉพาะผู้ดูแล</span><h2>เข้าสู่ระบบผู้ดูแล</h2></div><button class="close-button" id="closeAdminAuth" type="button" aria-label="ปิด">×</button></div>
+        <p class="dialog-info">ระบบจะส่งลิงก์เข้าสู่ระบบไปยังอีเมลผู้ดูแล ไม่ต้องใช้รหัสผ่าน</p>
+        <label class="form-field"><span>อีเมลผู้ดูแล</span><input id="adminAuthEmail" type="email" readonly /></label>
+        <p class="form-message" id="adminAuthMessage" role="status" aria-live="polite"></p>
+        <div class="dialog-actions"><button class="button secondary" id="cancelAdminAuth" type="button">ยกเลิก</button><button class="button primary" id="sendAdminMagicLink" type="submit">ส่งลิงก์เข้าสู่ระบบ</button></div>
+      </form>
+    </dialog>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7/dist/umd/supabase.min.js"></script>
     <script id="app-config">
-// ใส่ URL ที่ได้จาก Deploy > Manage deployments > Web app ของ Google Apps Script
-// URL ต้องลงท้ายด้วย /exec ระบบจะเชื่อม Google Sheets ให้อัตโนมัติเมื่อเปิดหน้าเว็บ
-// หากเว้นว่าง ระบบจะเปิดด้วยข้อมูลตัวอย่าง และให้ผู้ใช้ใส่ URL ผ่านหน้าตั้งค่า
+// ฐานข้อมูล Supabase: ใช้ Publishable key เท่านั้น (ห้ามใส่ Secret key ในหน้าเว็บ)
 window.ENVELOPE_APP_CONFIG = {
-  appsScriptUrl: "https://script.google.com/macros/s/AKfycbz7WU2jcB3tqDcHCW0XInm3fGPF7MCDO_m1j3zGmo7Tvf9BbxnFbwGhzg7fUPpE_qty/exec",
+  supabaseUrl: "https://ywhuywtabxpunyuyjsou.supabase.co",
+  supabasePublishableKey: "sb_publishable_xzzh_KY6bHtKjwXGQEle1A_ONRQF_wD",
+  supabaseAdminEmail: "cpd.khonkaen01@gmail.com",
+  supabaseRedirectUrl: "https://envelope-addressing.vercel.app/",
   sender: "สำนักงานสหกรณ์จังหวัดขอนแก่น",
   senderAddress: "เลขที่ 1/112 หมู่ที่ 13 ถนนหน้าเมือง ตำบลในเมือง\nอำเภอเมือง จังหวัดขอนแก่น 40000\nโทรศัพท์. 0-4324-6682 โทรสาร. 0-4324-6681",
   documentNumber: "ที่ ขก0010/.................................................................",
@@ -588,6 +595,11 @@ window.ENVELOPE_APP_CONFIG = {
     <script id="app-script">
 const CATEGORIES = ["หน่วยงานราชการ", "สหกรณ์และกลุ่มเกษตรกร", "ภาคเอกชน", "บุคคล"];
 const defaults = window.ENVELOPE_APP_CONFIG || {};
+const supabaseClient = window.supabase?.createClient(
+  defaults.supabaseUrl || "",
+  defaults.supabasePublishableKey || "",
+  { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } },
+);
 
 let savedSettings = {};
 try {
@@ -676,8 +688,11 @@ const state = {
   previewRecipientIndex: 0,
   printJobs: savedPrintJobs,
   currentPrintJobId: localStorage.getItem(CURRENT_PRINT_JOB_STORAGE_KEY) || "",
+  adminSession: null,
   settings: {
-    appsScriptUrl: defaults.appsScriptUrl || "",
+    supabaseUrl: defaults.supabaseUrl || "",
+    supabaseAdminEmail: String(defaults.supabaseAdminEmail || "").toLowerCase(),
+    supabaseRedirectUrl: defaults.supabaseRedirectUrl || "",
     sender: savedSettings.sender || defaults.sender || "สำนักงานสหกรณ์จังหวัดขอนแก่น",
     senderAddress: savedSettings.senderAddress || defaults.senderAddress || "เลขที่ 1/112 หมู่ที่ 13 ถนนหน้าเมือง ตำบลในเมือง\nอำเภอเมือง จังหวัดขอนแก่น 40000",
     documentNumber: savedSettings.documentNumber ?? defaults.documentNumber ?? "",
@@ -764,7 +779,12 @@ const elements = {
   printHistoryDialog: $("#printHistoryDialog"),
   printHistoryList: $("#printHistoryList"),
   historySaveStatus: $("#historySaveStatus"),
-  historySyncForm: $("#historySyncForm"),
+  historySyncHint: $("#historySyncHint"),
+  adminAuthButton: $("#adminAuthButton"),
+  adminAuthDialog: $("#adminAuthDialog"),
+  adminAuthForm: $("#adminAuthForm"),
+  adminAuthEmail: $("#adminAuthEmail"),
+  adminAuthMessage: $("#adminAuthMessage"),
 };
 
 function clampNumber(value, min, max, fallback) {
@@ -1011,11 +1031,9 @@ function startNewPrintJob() {
 
 async function openPrintHistory() {
   saveCurrentPrintJobDraft();
-  const savedAdminKey = sessionStorage.getItem("envelope-admin-key");
-  if (savedAdminKey) elements.historySyncForm.elements.adminKey.value = savedAdminKey;
   renderPrintHistory();
   elements.printHistoryDialog.showModal();
-  await loadPrintJobsFromSheet();
+  await loadPrintJobsFromSupabase();
   renderPrintHistory();
 }
 
@@ -1233,83 +1251,138 @@ function persistSettings() {
   localStorage.setItem("envelope-app-settings", JSON.stringify(saved));
 }
 
-function buildApiUrl(baseUrl, parameters) {
-  const url = new URL(baseUrl);
-  Object.entries(parameters).forEach(([key, value]) => url.searchParams.set(key, value));
-  return url.toString();
+function requireSupabase() {
+  if (!supabaseClient) throw new Error("ยังไม่ได้ตั้งค่า Supabase หรือโหลดไลบรารีไม่สำเร็จ");
+  return supabaseClient;
 }
 
-function validateAppsScriptUrl(value) {
+function isAdminSignedIn() {
+  const email = String(state.adminSession?.user?.email || "").toLowerCase();
+  return Boolean(email && email === state.settings.supabaseAdminEmail);
+}
+
+function updateAdminAuthUi() {
+  const signedIn = isAdminSignedIn();
+  if (elements.adminAuthButton) elements.adminAuthButton.textContent = signedIn ? "ออกจากระบบผู้ดูแล" : "เข้าสู่ระบบผู้ดูแล";
+  if (elements.historySyncHint) elements.historySyncHint.textContent = signedIn
+    ? "เข้าสู่ระบบแล้ว ประวัติจะสำรองและเปิดต่อจากเครื่องอื่นได้"
+    : "เข้าสู่ระบบผู้ดูแลเพื่อเปิดประวัติต่อจากเครื่องอื่นได้";
+}
+
+function openAdminAuthDialog(message = "") {
+  elements.adminAuthEmail.value = state.settings.supabaseAdminEmail;
+  elements.adminAuthMessage.textContent = message;
+  elements.adminAuthMessage.className = "form-message";
+  elements.adminAuthDialog.showModal();
+}
+
+function closeAdminAuthDialog() {
+  if (elements.adminAuthDialog.open) elements.adminAuthDialog.close();
+}
+
+async function requireAdminSession() {
+  if (isAdminSignedIn()) return true;
+  openAdminAuthDialog("กรุณาเข้าสู่ระบบผู้ดูแลก่อนเพิ่ม แก้ไข หรือลบข้อมูล");
+  return false;
+}
+
+async function handleAdminAuthSubmit(event) {
+  event.preventDefault();
+  const button = $("#sendAdminMagicLink");
+  button.disabled = true;
+  button.textContent = "กำลังส่ง…";
+  elements.adminAuthMessage.textContent = "กำลังส่งลิงก์เข้าสู่ระบบ…";
   try {
-    const url = new URL(value);
-    return url.protocol === "https:"
-      && url.hostname === "script.google.com"
-      && /^\/macros\/s\/[^/]+\/(exec|dev)$/.test(url.pathname);
-  } catch {
-    return false;
+    const redirectUrl = state.settings.supabaseRedirectUrl || `${location.origin}${location.pathname}`;
+    const { error } = await requireSupabase().auth.signInWithOtp({
+      email: state.settings.supabaseAdminEmail,
+      options: { emailRedirectTo: redirectUrl },
+    });
+    if (error) throw error;
+    elements.adminAuthMessage.textContent = `ส่งลิงก์แล้ว กรุณาเปิดอีเมล ${state.settings.supabaseAdminEmail}`;
+    elements.adminAuthMessage.className = "form-message success";
+  } catch (error) {
+    elements.adminAuthMessage.textContent = `ส่งลิงก์ไม่สำเร็จ: ${error.message}`;
+    elements.adminAuthMessage.className = "form-message error";
+  } finally {
+    button.disabled = false;
+    button.textContent = "ส่งลิงก์เข้าสู่ระบบ";
   }
 }
 
-function rowsFromPayload(payload) {
-  if (payload && payload.ok === false) throw new Error(payload.error || "Apps Script ส่งข้อผิดพลาดกลับมา");
-  const rows = Array.isArray(payload) ? payload : payload && payload.data;
-  if (!Array.isArray(rows)) throw new Error("รูปแบบข้อมูลจาก Apps Script ไม่ถูกต้อง");
-  return rows;
+async function toggleAdminAuth() {
+  if (!isAdminSignedIn()) {
+    openAdminAuthDialog();
+    return;
+  }
+  await requireSupabase().auth.signOut();
+  state.adminSession = null;
+  updateAdminAuthUi();
+  setNotice("ออกจากระบบผู้ดูแลแล้ว");
 }
 
-function requestWithJsonp(baseUrl, action = "recipients") {
-  return new Promise((resolve, reject) => {
-    const callbackName = `__envelopeJsonp${Date.now()}${Math.random().toString(36).slice(2)}`;
-    const script = document.createElement("script");
-    const cleanup = () => {
-      clearTimeout(timeout);
-      script.remove();
-      delete window[callbackName];
-    };
-    const timeout = setTimeout(() => {
-      cleanup();
-      reject(new Error("หมดเวลารอข้อมูลจาก Apps Script"));
-    }, 15000);
-
-    window[callbackName] = (payload) => {
-      cleanup();
-      resolve(payload);
-    };
-    script.onerror = () => {
-      cleanup();
-      reject(new Error("โหลดข้อมูลจาก Apps Script ไม่สำเร็จ"));
-    };
-    script.src = buildApiUrl(baseUrl, { action, callback: callbackName, _: Date.now() });
-    document.head.appendChild(script);
+async function initializeAdminAuth() {
+  if (!supabaseClient) return;
+  const { data } = await supabaseClient.auth.getSession();
+  state.adminSession = data.session;
+  updateAdminAuthUi();
+  supabaseClient.auth.onAuthStateChange((_event, session) => {
+    state.adminSession = session;
+    updateAdminAuthUi();
+    if (session && isAdminSignedIn()) {
+      closeAdminAuthDialog();
+      setNotice("เข้าสู่ระบบผู้ดูแลแล้ว");
+      loadPrintJobsFromSupabase().then(renderPrintHistory).catch(console.warn);
+    }
   });
 }
 
-async function requestRecipients(baseUrl) {
-  try {
-    const response = await fetch(buildApiUrl(baseUrl, { action: "recipients", _: Date.now() }), {
-      cache: "no-store",
-      redirect: "follow",
-    });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return rowsFromPayload(await response.json());
-  } catch (fetchError) {
-    console.warn("Fetch Apps Script ไม่สำเร็จ กำลังลอง JSONP", fetchError);
-    return rowsFromPayload(await requestWithJsonp(baseUrl, "recipients"));
-  }
+function recipientFromSupabase(row = {}) {
+  return {
+    id: row.id,
+    category: row.category,
+    prefix: row.prefix,
+    firstName: row.first_name,
+    lastName: row.last_name,
+    position: row.position,
+    department: row.department,
+    responsibleUnit: row.responsible_unit,
+    cooperativeType: row.cooperative_type,
+    address1: row.address1,
+    subdistrict: row.subdistrict,
+    district: row.district,
+    province: row.province,
+    postalCode: row.postal_code,
+  };
 }
 
-async function requestPrintJobs(baseUrl) {
-  try {
-    const response = await fetch(buildApiUrl(baseUrl, { action: "printJobs", _: Date.now() }), {
-      cache: "no-store",
-      redirect: "follow",
-    });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return rowsFromPayload(await response.json());
-  } catch (fetchError) {
-    console.warn("Fetch ประวัติชุดงานไม่สำเร็จ กำลังลอง JSONP", fetchError);
-    return rowsFromPayload(await requestWithJsonp(baseUrl, "printJobs"));
-  }
+function recipientToSupabase(payload = {}) {
+  return {
+    id: payload.id,
+    category: payload.category,
+    prefix: payload.prefix || "",
+    first_name: payload.firstName || "",
+    last_name: payload.lastName || "",
+    position: payload.position || "",
+    department: payload.department || "",
+    responsible_unit: payload.responsibleUnit || "",
+    cooperative_type: payload.cooperativeType || "",
+    address1: payload.address1 || "",
+    subdistrict: payload.subdistrict || "",
+    district: payload.district || "",
+    province: payload.province || "",
+    postal_code: payload.postalCode || "",
+    active: true,
+  };
+}
+
+async function requestRecipients() {
+  const { data, error } = await requireSupabase()
+    .from("recipients")
+    .select("*")
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  return (data || []).map(recipientFromSupabase);
 }
 
 function mergePrintJobs(rows) {
@@ -1323,69 +1396,75 @@ function mergePrintJobs(rows) {
   persistPrintHistory();
 }
 
-async function loadPrintJobsFromSheet() {
-  if (!validateAppsScriptUrl(state.settings.appsScriptUrl)) return;
+async function loadPrintJobsFromSupabase() {
+  if (!isAdminSignedIn()) return;
   try {
-    const rows = await requestPrintJobs(state.settings.appsScriptUrl);
+    const { data, error } = await requireSupabase().from("print_jobs").select("*").order("updated_at", { ascending: false });
+    if (error) throw error;
+    const rows = (data || []).map((row) => ({
+      ...(row.data || {}),
+      id: row.id,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+      completedAt: row.completed_at,
+      envelopePrintedAt: row.envelope_printed_at,
+      manifestPrintedAt: row.manifest_printed_at,
+    }));
     mergePrintJobs(rows);
-    if (elements.historySaveStatus) elements.historySaveStatus.textContent = "โหลดประวัติจาก Google Sheets แล้ว";
+    if (elements.historySaveStatus) elements.historySaveStatus.textContent = "โหลดประวัติจาก Supabase แล้ว";
   } catch (error) {
-    console.warn("ยังโหลดประวัติจาก Google Sheets ไม่ได้ ใช้ประวัติบนเครื่องแทน", error);
+    console.warn("ยังโหลดประวัติจาก Supabase ไม่ได้ ใช้ประวัติบนเครื่องแทน", error);
   }
 }
 
-async function postPrintJobAction(payload) {
-  const response = await fetch(state.settings.appsScriptUrl, {
-    method: "POST",
-    headers: { "Content-Type": "text/plain;charset=UTF-8" },
-    body: JSON.stringify(payload),
-    redirect: "follow",
-  });
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  const result = await response.json();
-  if (result.ok === false) throw new Error(result.error || "บันทึกประวัติไม่สำเร็จ");
-  return result.data;
+async function savePrintJobToSupabase(job) {
+  const row = {
+    id: job.id,
+    data: job,
+    created_at: job.createdAt || new Date().toISOString(),
+    updated_at: job.updatedAt || new Date().toISOString(),
+    completed_at: job.completedAt || null,
+    envelope_printed_at: job.envelopePrintedAt || null,
+    manifest_printed_at: job.manifestPrintedAt || null,
+  };
+  const { error } = await requireSupabase().from("print_jobs").upsert(row, { onConflict: "id" });
+  if (error) throw error;
 }
 
 let printJobCloudTimer;
 function queuePrintJobCloudSave(job) {
-  const adminKey = sessionStorage.getItem("envelope-admin-key");
-  if (!adminKey || !validateAppsScriptUrl(state.settings.appsScriptUrl) || !job) return;
+  if (!isAdminSignedIn() || !job) return;
   clearTimeout(printJobCloudTimer);
   printJobCloudTimer = setTimeout(async () => {
     try {
-      await postPrintJobAction({ action: "savePrintJob", adminKey, job });
-      if (elements.historySaveStatus) elements.historySaveStatus.textContent = "สำรองไว้ใน Google Sheets แล้ว";
+      await savePrintJobToSupabase(job);
+      if (elements.historySaveStatus) elements.historySaveStatus.textContent = "สำรองไว้ใน Supabase แล้ว";
     } catch (error) {
-      console.warn("สำรองชุดงานไป Google Sheets ไม่สำเร็จ", error);
+      console.warn("สำรองชุดงานไป Supabase ไม่สำเร็จ", error);
     }
   }, 700);
 }
 
 function queuePrintJobCloudDelete(id) {
-  const adminKey = sessionStorage.getItem("envelope-admin-key");
-  if (!adminKey || !validateAppsScriptUrl(state.settings.appsScriptUrl) || !id) return;
-  postPrintJobAction({ action: "deletePrintJob", adminKey, id }).catch((error) => {
-    console.warn("ลบประวัติจาก Google Sheets ไม่สำเร็จ", error);
+  if (!isAdminSignedIn() || !id) return;
+  requireSupabase().from("print_jobs").delete().eq("id", id).then(({ error }) => {
+    if (error) console.warn("ลบประวัติจาก Supabase ไม่สำเร็จ", error);
   });
 }
 
-async function syncPrintHistory(event) {
-  event.preventDefault();
-  if (!elements.historySyncForm.reportValidity()) return;
-  const adminKey = String(new FormData(elements.historySyncForm).get("adminKey") || "").trim();
-  sessionStorage.setItem("envelope-admin-key", adminKey);
+async function syncPrintHistory() {
+  if (!(await requireAdminSession())) return;
   const button = $("#syncPrintHistory");
   button.disabled = true;
   button.textContent = "กำลังซิงค์…";
   try {
     for (const job of state.printJobs) {
-      await postPrintJobAction({ action: "savePrintJob", adminKey, job });
+      await savePrintJobToSupabase(job);
     }
-    await loadPrintJobsFromSheet();
+    await loadPrintJobsFromSupabase();
     renderPrintHistory();
-    elements.historySaveStatus.textContent = "สำรองไว้ใน Google Sheets แล้ว";
-    setNotice(`ซิงค์ประวัติ ${state.printJobs.length} ชุดกับ Google Sheets แล้ว`);
+    elements.historySaveStatus.textContent = "สำรองไว้ใน Supabase แล้ว";
+    setNotice(`ซิงค์ประวัติ ${state.printJobs.length} ชุดกับ Supabase แล้ว`);
   } catch (error) {
     console.error(error);
     elements.historySaveStatus.textContent = `ซิงค์ไม่สำเร็จ: ${error.message}`;
@@ -1605,25 +1684,24 @@ function toggleRecipient(id) {
   saveCurrentPrintJobDraft();
 }
 
-async function connectToSheet() {
-  const url = state.settings.appsScriptUrl;
-  if (!validateAppsScriptUrl(url)) {
+async function connectToDatabase() {
+  if (!supabaseClient) {
     elements.status.className = "status-pill error";
-    elements.status.querySelector("span").textContent = "ยังไม่ได้ตั้งค่า Apps Script";
-    setNotice("กรุณากำหนด appsScriptUrl ใน index.html ก่อนใช้งาน");
+    elements.status.querySelector("span").textContent = "ยังไม่ได้ตั้งค่า Supabase";
+    setNotice("กรุณาตรวจสอบค่า Supabase ใน config.js");
     return;
   }
 
   elements.status.className = "status-pill loading";
   elements.status.querySelector("span").textContent = "กำลังเชื่อมฐานข้อมูล";
-  setNotice("กำลังดึงข้อมูลจาก Google Sheets…");
+  setNotice("กำลังดึงข้อมูลจาก Supabase…");
   try {
-    const rows = await requestRecipients(url);
+    const rows = await requestRecipients();
     state.recipients = rows.map(normalizeRecipient);
     state.selected = new Set([...state.selected].filter((id) => state.recipients.some((item) => item.id === id)));
     state.connected = true;
     elements.status.className = "status-pill connected";
-    elements.status.querySelector("span").textContent = "เชื่อม Google Sheets แล้ว";
+    elements.status.querySelector("span").textContent = "เชื่อม Supabase แล้ว";
     const restoredJob = restoreSavedPrintJobOnLoad();
     if (!restoredJob) render();
     setNotice(restoredJob
@@ -1638,30 +1716,22 @@ async function connectToSheet() {
   }
 }
 
-function openRecipientDialog() {
-  if (!validateAppsScriptUrl(state.settings.appsScriptUrl)) {
-    setNotice("ยังไม่ได้กำหนด Apps Script URL จึงไม่สามารถเพิ่มข้อมูลได้");
-    return;
-  }
+async function openRecipientDialog() {
+  if (!(await requireAdminSession())) return;
   state.editingRecipientId = null;
   elements.recipientForm.reset();
   elements.recipientFormMessage.textContent = "";
   elements.recipientFormMessage.className = "form-message";
   $("#recipientDialogTitle").textContent = "เพิ่มรายชื่อผู้รับ";
-  $("#recipientDialogInfo").innerHTML = "ข้อมูลจะบันทึกลงชีต <strong>Recipients</strong> ผ่าน Google Apps Script โดยตรง";
-  elements.saveRecipient.textContent = "บันทึกลง Google Sheets";
+  $("#recipientDialogInfo").innerHTML = "ข้อมูลจะบันทึกลงฐานข้อมูล <strong>Supabase</strong> โดยตรง";
+  elements.saveRecipient.textContent = "บันทึกข้อมูลผู้รับ";
   elements.deleteRecipientButton.hidden = true;
-  const savedAdminKey = sessionStorage.getItem("envelope-admin-key");
-  if (savedAdminKey) elements.recipientForm.elements.adminKey.value = savedAdminKey;
   updateRecipientFormRequirements();
   elements.recipientDialog.showModal();
 }
 
-function openEditRecipientDialog(id) {
-  if (!validateAppsScriptUrl(state.settings.appsScriptUrl)) {
-    setNotice("ยังไม่ได้กำหนด Apps Script URL จึงไม่สามารถแก้ไขข้อมูลได้");
-    return;
-  }
+async function openEditRecipientDialog(id) {
+  if (!(await requireAdminSession())) return;
   const recipient = state.recipients.find((item) => item.id === id);
   if (!recipient) {
     setNotice("ไม่พบรายการผู้รับที่ต้องการแก้ไข");
@@ -1673,7 +1743,7 @@ function openEditRecipientDialog(id) {
   elements.recipientFormMessage.textContent = "";
   elements.recipientFormMessage.className = "form-message";
   $("#recipientDialogTitle").textContent = "แก้ไขข้อมูลผู้รับ";
-  $("#recipientDialogInfo").innerHTML = "บันทึกการแก้ไขกลับไปยังแถวเดิมในชีต <strong>Recipients</strong>";
+  $("#recipientDialogInfo").innerHTML = "บันทึกการแก้ไขกลับไปยังรายการเดิมในฐานข้อมูล <strong>Supabase</strong>";
   elements.saveRecipient.textContent = "บันทึกการแก้ไข";
   elements.deleteRecipientButton.hidden = false;
 
@@ -1686,8 +1756,6 @@ function openEditRecipientDialog(id) {
   fields.forEach((name) => {
     elements.recipientForm.elements[name].value = recipient[name] || "";
   });
-  const savedAdminKey = sessionStorage.getItem("envelope-admin-key");
-  if (savedAdminKey) elements.recipientForm.elements.adminKey.value = savedAdminKey;
   elements.recipientDialog.showModal();
 }
 
@@ -1861,34 +1929,14 @@ function recipientPayloadMatches(row, payload) {
 }
 
 async function postRecipient(payload) {
-  let readablePayload = null;
-  try {
-    const response = await fetch(state.settings.appsScriptUrl, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain;charset=UTF-8" },
-      body: JSON.stringify(payload),
-      redirect: "follow",
-    });
-    if (response.ok) readablePayload = await response.json();
-  } catch (error) {
-    console.warn("อ่านผลตอบกลับ POST ไม่ได้ ระบบจะตรวจจากรายชื่อแทน", error);
-  }
-
-  if (readablePayload && readablePayload.ok === false) {
-    const serverError = new Error(readablePayload.error || "บันทึกข้อมูลไม่สำเร็จ");
-    serverError.fromServer = true;
-    throw serverError;
-  }
-
-  for (let attempt = 0; attempt < 5; attempt += 1) {
-    await delay(700 + (attempt * 350));
-    const rows = await requestRecipients(state.settings.appsScriptUrl);
-    const savedRow = rows.find((item) => String(item.id) === payload.id);
-    if (savedRow && (payload.action !== "updateRecipient" || recipientPayloadMatches(savedRow, payload))) return rows;
-  }
-  throw new Error(payload.action === "updateRecipient"
-    ? "ยังตรวจไม่พบข้อมูลที่แก้ไข กรุณาตรวจ Deployment ของ Apps Script"
-    : "ยังตรวจไม่พบข้อมูลใหม่ กรุณาตรวจรหัสผู้ดูแลและ Deployment ของ Apps Script");
+  if (!(await requireAdminSession())) throw new Error("กรุณาเข้าสู่ระบบผู้ดูแล");
+  const row = recipientToSupabase(payload);
+  const query = payload.action === "updateRecipient"
+    ? requireSupabase().from("recipients").update(row).eq("id", payload.id)
+    : requireSupabase().from("recipients").insert(row);
+  const { error } = await query;
+  if (error) throw error;
+  return requestRecipients();
 }
 
 async function handleRecipientSubmit(event) {
@@ -1923,13 +1971,12 @@ async function handleRecipientSubmit(event) {
   elements.saveRecipient.disabled = true;
   elements.saveRecipient.textContent = "กำลังบันทึก…";
   elements.recipientFormMessage.textContent = isEditing
-    ? "กำลังบันทึกการแก้ไขไปยัง Google Sheets…"
-    : "กำลังส่งข้อมูลไป Google Sheets…";
+    ? "กำลังบันทึกการแก้ไขไปยัง Supabase…"
+    : "กำลังบันทึกข้อมูลไปยัง Supabase…";
   elements.recipientFormMessage.className = "form-message";
 
   try {
     const rows = await postRecipient(payload);
-    sessionStorage.setItem("envelope-admin-key", payload.adminKey);
     state.recipients = rows.map(normalizeRecipient);
     state.category = payload.category;
     state.responsibleUnit = "ทั้งหมด";
@@ -1948,11 +1995,12 @@ async function handleRecipientSubmit(event) {
     elements.recipientFormMessage.className = "form-message error";
   } finally {
     elements.saveRecipient.disabled = false;
-    elements.saveRecipient.textContent = isEditing ? "บันทึกการแก้ไข" : "บันทึกลง Google Sheets";
+    elements.saveRecipient.textContent = isEditing ? "บันทึกการแก้ไข" : "บันทึกข้อมูลผู้รับ";
   }
 }
 
 async function deleteRecipient(id) {
+  if (!(await requireAdminSession())) return;
   const recipient = state.recipients.find((item) => item.id === id);
   if (!recipient) {
     setNotice("ไม่พบรายการผู้รับที่ต้องการลบ");
@@ -1964,8 +2012,6 @@ async function deleteRecipient(id) {
   elements.deleteRecipientMessage.textContent = "";
   elements.deleteRecipientMessage.className = "form-message";
   elements.deleteRecipientForm.reset();
-  const savedAdminKey = sessionStorage.getItem("envelope-admin-key");
-  if (savedAdminKey) elements.deleteRecipientForm.elements.adminKey.value = savedAdminKey;
   elements.deleteRecipientDialog.dataset.recipientId = id;
   elements.deleteRecipientDialog.showModal();
 }
@@ -1983,49 +2029,23 @@ async function handleDeleteRecipientSubmit(event) {
   }
 
   const name = recipientName(recipient);
-  const adminKey = String(elements.deleteRecipientForm.elements.adminKey.value || "").trim();
-  const payload = { action: "deleteRecipient", id, adminKey };
-
   elements.confirmDeleteRecipient.disabled = true;
   elements.confirmDeleteRecipient.textContent = "กำลังลบ…";
-  elements.deleteRecipientMessage.textContent = `กำลังลบ ${name} จาก Google Sheets…`;
+  elements.deleteRecipientMessage.textContent = `กำลังลบ ${name} จาก Supabase…`;
   elements.deleteRecipientMessage.className = "form-message";
-  setNotice(`กำลังลบ ${name} จาก Google Sheets…`);
+  setNotice(`กำลังลบ ${name} จาก Supabase…`);
 
   try {
-    let readablePayload = null;
-    try {
-      const response = await fetch(state.settings.appsScriptUrl, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=UTF-8" },
-        body: JSON.stringify(payload),
-        redirect: "follow",
-      });
-      if (response.ok) readablePayload = await response.json();
-      else throw new Error(`HTTP ${response.status}`);
-    } catch (error) {
-      console.warn("อ่านผลตอบกลับการลบไม่ได้ ระบบจะตรวจจากรายชื่อแทน", error);
-    }
-
-    if (readablePayload && readablePayload.ok === false) {
-      throw new Error(readablePayload.error || "ลบข้อมูลไม่สำเร็จ");
-    }
-
-    sessionStorage.setItem("envelope-admin-key", payload.adminKey);
-    for (let attempt = 0; attempt < 5; attempt += 1) {
-      await delay(500 + (attempt * 300));
-      const rows = await requestRecipients(state.settings.appsScriptUrl);
-      if (!rows.some((item) => String(item.id) === String(id))) {
-        state.recipients = rows.map(normalizeRecipient);
-        state.selected.delete(id);
-        closeDeleteRecipientDialog();
-        closeRecipientDialog();
-        render();
-        setNotice(`ลบ ${name} ออกจากฐานข้อมูลแล้ว`);
-        return;
-      }
-    }
-    throw new Error("ส่งคำสั่งลบแล้ว แต่ยังตรวจพบรายการเดิม กรุณาตรวจ Deployment ของ Apps Script");
+    const { error } = await requireSupabase().from("recipients").delete().eq("id", id);
+    if (error) throw error;
+    const rows = await requestRecipients();
+    state.recipients = rows.map(normalizeRecipient);
+    state.selected.delete(id);
+    closeDeleteRecipientDialog();
+    closeRecipientDialog();
+    render();
+    setNotice(`ลบ ${name} ออกจากฐานข้อมูลแล้ว`);
+    return;
   } catch (error) {
     console.error(error);
     elements.deleteRecipientMessage.textContent = error.message;
@@ -2367,7 +2387,11 @@ $("#openPrintHistory").addEventListener("click", openPrintHistory);
 $("#closePrintHistory").addEventListener("click", closePrintHistory);
 $("#donePrintHistory").addEventListener("click", closePrintHistory);
 $("#startNewPrintJob").addEventListener("click", startNewPrintJob);
-elements.historySyncForm.addEventListener("submit", syncPrintHistory);
+$("#syncPrintHistory").addEventListener("click", syncPrintHistory);
+elements.adminAuthButton.addEventListener("click", toggleAdminAuth);
+elements.adminAuthForm.addEventListener("submit", handleAdminAuthSubmit);
+$("#closeAdminAuth").addEventListener("click", closeAdminAuthDialog);
+$("#cancelAdminAuth").addEventListener("click", closeAdminAuthDialog);
 $("#printButton").addEventListener("click", printEnvelopes);
 $("#heroPrint").addEventListener("click", printEnvelopes);
 elements.previewPrevious.addEventListener("click", () => {
@@ -2389,7 +2413,9 @@ window.addEventListener("resize", () => {
 });
 
 render();
-connectToSheet();
+initializeAdminAuth()
+  .catch((error) => console.warn("ตรวจสอบสถานะผู้ดูแลไม่สำเร็จ", error))
+  .finally(connectToDatabase);
 
     </script>
   </body>

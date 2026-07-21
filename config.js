@@ -1,14 +1,15 @@
-// ใส่ URL ที่ได้จาก Deploy > Manage deployments > Web app ของ Google Apps Script
-// URL ต้องลงท้ายด้วย /exec ระบบจะเชื่อม Google Sheets ให้อัตโนมัติเมื่อเปิดหน้าเว็บ
-// หากเว้นว่าง ระบบจะเปิดด้วยข้อมูลตัวอย่าง และให้ผู้ใช้ใส่ URL ผ่านหน้าตั้งค่า
+// ฐานข้อมูล Supabase: ใช้ Publishable key เท่านั้น (ห้ามใส่ Secret key ในหน้าเว็บ)
 window.ENVELOPE_APP_CONFIG = {
-  appsScriptUrl: "https://script.google.com/macros/s/AKfycbz7WU2jcB3tqDcHCW0XInm3fGPF7MCDO_m1j3zGmo7Tvf9BbxnFbwGhzg7fUPpE_qty/exec",
+  supabaseUrl: "https://ywhuywtabxpunyuyjsou.supabase.co",
+  supabasePublishableKey: "sb_publishable_xzzh_KY6bHtKjwXGQEle1A_ONRQF_wD",
+  supabaseAdminEmail: "cpd.khonkaen01@gmail.com",
+  supabaseRedirectUrl: "https://envelope-addressing.vercel.app/",
   sender: "สำนักงานสหกรณ์จังหวัดขอนแก่น",
   senderAddress: "เลขที่ 1/112 หมู่ที่ 13 ถนนหน้าเมือง ตำบลในเมือง\nอำเภอเมือง จังหวัดขอนแก่น 40000\nโทรศัพท์. 0-4324-6682 โทรสาร. 0-4324-6681",
   documentNumber: "ที่ ขก0010/.................................................................",
   paperSize: "DL",
   showSender: true,
-  garudaImage: "https://img1.pic.in.th/images/-PNG0457c311e6c77ae0f.png",
+  garudaImage: "assets/garuda.png",
   showGaruda: true,
   garudaPlacement: "left",
   garudaSizeMm: 15,
@@ -20,6 +21,9 @@ window.ENVELOPE_APP_CONFIG = {
   recipientTopPercent: 40,
   recipientLeftPercent: 42,
   recipientLineHeight: 1.5,
+  showRecipientDepartment: true,
+  showRecipientAddress: true,
+  showPostagePermit: true,
   postagePermitText: "ชำระค่าฝากส่งเป็นรายเดือน\nใบอนุญาตเลขที่ xx/xxx\nไปรษณีย์เดชาวุธ",
   postagePermitTopMm: 7,
   postagePermitRightMm: 8,
