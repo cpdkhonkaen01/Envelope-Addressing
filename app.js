@@ -225,6 +225,9 @@ const elements = {
   deletePrintJobMessage: $("#deletePrintJobMessage"),
   confirmDeletePrintJob: $("#confirmDeletePrintJob"),
   printJobCreator: $("#printJobCreator"),
+  printJobCreatorLocked: $("#printJobCreatorLocked"),
+  printJobCreatorLockedName: $("#printJobCreatorLockedName"),
+  printJobCreatorHelp: $("#printJobCreatorHelp"),
   loginScreen: $("#loginScreen"),
   loginGateForm: $("#loginGateForm"),
   loginGatePassword: $("#loginGatePassword"),
@@ -415,8 +418,14 @@ function syncHistoryGroupOptions() {
 function setPrintJobCreatorVisible(visible, options = {}) {
   const wrapper = elements.printJobCreator?.closest(".job-creator-control");
   if (!wrapper) return;
+  const hasCreator = Boolean(state.settings.printJobCreator);
   wrapper.classList.toggle("is-hidden", !visible);
   wrapper.classList.toggle("is-active", visible && Boolean(options.active));
+  elements.printJobCreator.hidden = hasCreator;
+  elements.printJobCreator.disabled = hasCreator;
+  if (elements.printJobCreatorLocked) elements.printJobCreatorLocked.hidden = !hasCreator;
+  if (elements.printJobCreatorLockedName) elements.printJobCreatorLockedName.textContent = state.settings.printJobCreator || "";
+  if (elements.printJobCreatorHelp) elements.printJobCreatorHelp.hidden = hasCreator;
 }
 
 function focusPrintJobCreator() {

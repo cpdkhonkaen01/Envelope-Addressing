@@ -78,6 +78,8 @@ body.app-locked .login-screen{display:grid}
 .job-creator-control select{width:100%;height:54px;padding:0 44px 0 16px;border:1px solid #cfd9ec;border-radius:14px;background:#fff;color:#17223b;font-size:16px;font-weight:700}
 .job-creator-control small{display:block;margin-top:7px;color:#667085;font-size:12px;line-height:1.5}
 .job-creator-control a{color:#2856d9;font-weight:800}
+.job-creator-locked{min-height:54px;padding:9px 16px;border:1px solid #b9dcca;border-radius:14px;background:#f0fbf7;color:#175f48}
+.job-creator-locked span,.job-creator-locked strong{display:block}.job-creator-locked span{font-size:12px}.job-creator-locked strong{margin-top:2px;font-size:17px;line-height:1.3}
 .button{min-height:46px;padding:0 18px;border-radius:13px;font-weight:800;transition:.18s}
 .button.primary{border:1px solid var(--blue);background:var(--blue);color:#fff;box-shadow:0 10px 22px rgba(40,86,217,.18)}
 .button.primary:hover{transform:translateY(-1px);background:var(--blue-deep)}
@@ -480,7 +482,8 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
               <option value="กลุ่มส่งเสริมสหกรณ์ 8">กลุ่มส่งเสริมสหกรณ์ 8</option>
               <option value="นิคมสหกรณ์ดงมูล">นิคมสหกรณ์ดงมูล</option>
             </select>
-            <small>เลือกครั้งเดียว ระบบจะจำไว้และบันทึกไว้กับทุกชุดงาน · <a href="https://khonkaen.web.cpd.go.th/about-us/staff.html" target="_blank" rel="noopener">ดูรายชื่อบุคลากร</a></small>
+            <div class="job-creator-locked" id="printJobCreatorLocked" hidden><span>กลุ่มงานที่เลือก</span><strong id="printJobCreatorLockedName"></strong></div>
+            <small id="printJobCreatorHelp">เลือกครั้งเดียว ระบบจะล็อกกลุ่มงานนี้ไว้จนกว่าจะเริ่มชุดงานใหม่ · <a href="https://khonkaen.web.cpd.go.th/about-us/staff.html" target="_blank" rel="noopener">ดูรายชื่อบุคลากร</a></small>
           </label>
           <div class="hero-actions">
             <button class="button new-job-button" id="startNewPrintJob" type="button">＋ เริ่มชุดงานใหม่</button>
@@ -1011,6 +1014,9 @@ const elements = {
   deletePrintJobMessage: $("#deletePrintJobMessage"),
   confirmDeletePrintJob: $("#confirmDeletePrintJob"),
   printJobCreator: $("#printJobCreator"),
+  printJobCreatorLocked: $("#printJobCreatorLocked"),
+  printJobCreatorLockedName: $("#printJobCreatorLockedName"),
+  printJobCreatorHelp: $("#printJobCreatorHelp"),
   loginScreen: $("#loginScreen"),
   loginGateForm: $("#loginGateForm"),
   loginGatePassword: $("#loginGatePassword"),
@@ -1201,8 +1207,14 @@ function syncHistoryGroupOptions() {
 function setPrintJobCreatorVisible(visible, options = {}) {
   const wrapper = elements.printJobCreator?.closest(".job-creator-control");
   if (!wrapper) return;
+  const hasCreator = Boolean(state.settings.printJobCreator);
   wrapper.classList.toggle("is-hidden", !visible);
   wrapper.classList.toggle("is-active", visible && Boolean(options.active));
+  elements.printJobCreator.hidden = hasCreator;
+  elements.printJobCreator.disabled = hasCreator;
+  if (elements.printJobCreatorLocked) elements.printJobCreatorLocked.hidden = !hasCreator;
+  if (elements.printJobCreatorLockedName) elements.printJobCreatorLockedName.textContent = state.settings.printJobCreator || "";
+  if (elements.printJobCreatorHelp) elements.printJobCreatorHelp.hidden = hasCreator;
 }
 
 function focusPrintJobCreator() {
