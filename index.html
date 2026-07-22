@@ -72,6 +72,8 @@ body.app-locked .login-screen{display:grid}
 .button.primary:hover{transform:translateY(-1px);background:var(--blue-deep)}
 .button.primary b{display:inline-grid;min-width:24px;height:24px;margin-left:8px;place-items:center;border-radius:8px;background:rgba(255,255,255,.18)}
 .button.secondary{border:1px solid #d9dfeb;background:#fff;color:#344054}
+.button.new-job-button{border:1px solid #bcd0ff;background:#fff;color:#1d4ed8;box-shadow:0 8px 18px rgba(40,86,217,.08)}
+.button.new-job-button:hover{border-color:#2856d9;background:#eef3ff;transform:translateY(-1px)}
 .button.history-button{border:1px solid #cbd7f3;background:#edf3ff;color:#234ec9}
 .button.history-button:hover{border-color:#9eb4eb;background:#e1eaff}
 .preview-panel{align-self:center;justify-self:center;width:min(720px,94%)}
@@ -457,9 +459,10 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
             <small>เลือกครั้งเดียว ระบบจะจำไว้และบันทึกไว้กับทุกชุดงาน · <a href="https://khonkaen.web.cpd.go.th/about-us/staff.html" target="_blank" rel="noopener">ดูรายชื่อบุคลากร</a></small>
           </label>
           <div class="hero-actions">
+            <button class="button new-job-button" id="startNewPrintJob" type="button">＋ เริ่มชุดงานใหม่</button>
             <button class="button primary" id="heroPrint" type="button">พิมพ์หน้าซองจดหมาย <b id="heroSelected">0</b></button>
             <button class="button secondary" id="openManifestDialog" type="button">พิมพ์ใบนำส่ง</button>
-            <button class="button history-button" id="openPrintHistory" type="button">ประวัติชุดงานพิมพ์</button>
+            <button class="button history-button" id="openPrintHistory" type="button">ดูประวัติชุดงานพิมพ์</button>
           </div>
         </div>
         <div class="preview-panel">
@@ -670,7 +673,6 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
       </div>
       <p class="dialog-info">ระบบเก็บผู้สร้างชุดงาน รายชื่อ จำนวนซอง วันที่ และเลขลงทะเบียน/EMS ให้อัตโนมัติ สามารถกด “ดำเนินการต่อ” เพื่อกลับมาทำต่อหรือแก้ไขได้ทันที</p>
       <div class="history-toolbar">
-        <button class="button primary" id="startNewPrintJob" type="button">＋ เริ่มชุดงานใหม่</button>
         <span class="history-save-status" id="historySaveStatus">บันทึกล่าสุดบนเครื่องนี้</span>
       </div>
       <section class="history-filter-panel" aria-label="ตัวกรองประวัติชุดงานพิมพ์">
