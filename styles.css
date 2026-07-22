@@ -1,4 +1,4 @@
-@font-face{font-family:"TH Sarabun New";src:url("fonts/THSarabunNew.ttf") format("truetype");font-weight:400 700;font-style:normal;font-display:block}
+@font-face{font-family:"TH Sarabun New";src:url("fonts/THSarabunNew.ttf") format("truetype");font-weight:400;font-style:normal;font-display:block}
 :root{--ink:#17223b;--muted:#667085;--blue:#2856d9;--blue-deep:#163aa5;--blue-soft:#eaf0ff;--green:#20a276;--green-soft:#e9f8f2;--amber:#e4a11b;--line:#e5e9f2;--page:#f5f7fb;--shadow:0 18px 52px rgba(37,55,91,.09)}
 
 *{box-sizing:border-box}
@@ -99,7 +99,7 @@ body.app-locked .login-screen{display:grid}
 .sender-mini strong{display:block}
 .sender-address-mini,.sender-document-mini{margin:0;line-height:inherit}
 .sender-document-mini{font-weight:700}
-.receiver-mini{position:absolute;z-index:2;width:68%;color:#17223b}
+.receiver-mini{position:absolute;z-index:2;width:68%;color:#17223b;font-synthesis:weight}
 .recipient-heading{display:flex;align-items:baseline;gap:.55em}
 .recipient-greeting{flex:0 0 auto;color:#667085}
 .recipient-name{display:block;min-width:0;white-space:nowrap}

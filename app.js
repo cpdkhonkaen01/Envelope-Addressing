@@ -1069,7 +1069,7 @@ function extractReceivingPostOffice(permit = "") {
 
 function printFontFaceCss() {
   const fontUrl = new URL(PRINT_FONT_FILE, location.href).href;
-  return `@font-face{font-family:"TH Sarabun New";src:url("${fontUrl}") format("truetype");font-weight:400 700;font-style:normal;font-display:block}`;
+  return `@font-face{font-family:"TH Sarabun New";src:url("${fontUrl}") format("truetype");font-weight:400;font-style:normal;font-display:block}`;
 }
 
 function parseTrackingCode(value = "", defaultPrefix = "") {
