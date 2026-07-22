@@ -219,8 +219,6 @@ dialog hr{height:1px;margin:20px 0 4px;border:0;background:#edf0f5}
 .history-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px}
 .history-actions button{min-height:40px;padding:0 13px;border:1px solid #d9dfeb;border-radius:10px;background:#fff;color:#344054;font-size:13px;font-weight:800}
 .history-actions .resume{border-color:#2856d9;background:#2856d9;color:#fff}
-.history-actions .pdf-download{border-color:#b8c9f5;background:#edf3ff;color:#234ec9}
-.history-actions .pdf-download.manifest{border-color:#a8dfca;background:#edf9f4;color:#127454}
 .history-actions .delete{border-color:#ffd2d2;color:#b42318}
 .history-sync-panel{display:block;margin-top:18px;padding:16px;border:1px solid #bfe7d8;border-radius:16px;background:#f0fbf7}
 .history-sync-panel strong,.history-sync-panel small{display:block}.history-sync-panel small{margin-top:4px;color:#667085;line-height:1.5}.history-sync-panel .form-field span{font-size:12px}
@@ -1335,8 +1333,6 @@ function renderPrintHistory() {
       <td><span class="history-status ${status.className}">${status.label}</span></td>
       <td><div class="history-actions">
         <button class="resume" data-resume-job="${escapeHtml(job.id)}" type="button">ดำเนินการต่อ</button>
-        <button class="pdf-download" data-download-envelope-pdf="${escapeHtml(job.id)}" type="button">ดาวน์โหลด PDF หน้าซอง</button>
-        <button class="pdf-download manifest" data-download-manifest-pdf="${escapeHtml(job.id)}" type="button">ดาวน์โหลด PDF ใบนำส่ง</button>
         ${job.completedAt ? "" : `<button data-complete-job="${escapeHtml(job.id)}" type="button">ทำเครื่องหมายว่าเสร็จ</button>`}
         <button class="delete" data-delete-job="${escapeHtml(job.id)}" type="button">ลบประวัติ</button>
       </div></td>
@@ -1348,12 +1344,6 @@ function renderPrintHistory() {
   });
   elements.printHistoryList.querySelectorAll("[data-complete-job]").forEach((button) => {
     button.addEventListener("click", () => completePrintJob(button.dataset.completeJob));
-  });
-  elements.printHistoryList.querySelectorAll("[data-download-envelope-pdf]").forEach((button) => {
-    button.addEventListener("click", () => downloadHistoryPdf(button, "envelope"));
-  });
-  elements.printHistoryList.querySelectorAll("[data-download-manifest-pdf]").forEach((button) => {
-    button.addEventListener("click", () => downloadHistoryPdf(button, "manifest"));
   });
   elements.printHistoryList.querySelectorAll("[data-delete-job]").forEach((button) => {
     button.addEventListener("click", () => requestDeletePrintJob(button));
