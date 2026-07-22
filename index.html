@@ -89,6 +89,9 @@ body.app-locked .login-screen{display:grid}
 .button.primary[disabled]{border-color:#b7c5eb;background:#8fa8ed;color:#fff}
 .button.new-job-button{border:1px solid #bcd0ff;background:#fff;color:#1d4ed8;box-shadow:0 8px 18px rgba(40,86,217,.08)}
 .button.new-job-button:hover{border-color:#2856d9;background:#eef3ff;transform:translateY(-1px)}
+.button.finish-job-button{border:1px solid #15966d;background:#20a276;color:#fff;box-shadow:0 8px 18px rgba(32,162,118,.18)}
+.button.finish-job-button:hover{background:#168963;transform:translateY(-1px)}.button.finish-job-button:disabled{border-color:#d8e6e1;background:#e9f1ee;color:#8aa39a;box-shadow:none}
+.finish-icon{border-color:#b8e5d5!important;background:#e9f8f2!important;color:#137555!important}.finish-text{color:#137555!important}
 .button.history-button{border:1px solid #cbd7f3;background:#edf3ff;color:#234ec9}
 .button.history-button:hover{border-color:#9eb4eb;background:#e1eaff}
 .preview-panel{align-self:center;justify-self:center;width:min(720px,94%)}
@@ -487,6 +490,7 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
           </label>
           <div class="hero-actions">
             <button class="button new-job-button" id="startNewPrintJob" type="button">＋ เริ่มชุดงานใหม่</button>
+            <button class="button finish-job-button" id="finishPrintJob" type="button" disabled>✓ จบชุดงาน</button>
             <button class="button primary" id="heroPrint" type="button">พิมพ์หน้าซองจดหมาย <b id="heroSelected">0</b></button>
             <button class="button secondary" id="openManifestDialog" type="button">พิมพ์ใบนำส่ง</button>
             <button class="button history-button" id="openPrintHistory" type="button">ดูประวัติชุดงานพิมพ์</button>
@@ -738,6 +742,16 @@ footer{width:min(100% - 28px,680px);flex-direction:column}
       </form>
     </dialog>
 
+    <dialog id="finishPrintJobDialog" class="confirm-dialog">
+      <form id="finishPrintJobForm">
+        <div class="confirm-icon finish-icon">✓</div>
+        <div class="dialog-title confirm-title"><div><span class="eyebrow finish-text">จบการทำงาน</span><h2>ยืนยันจบชุดงานนี้</h2></div><button class="close-button" id="closeFinishPrintJobDialog" type="button" aria-label="ปิด">×</button></div>
+        <p class="dialog-info">ระบบจะบันทึกชุดงานนี้เป็น “เสร็จสิ้น” แล้วล้างรายชื่อที่เลือก จำนวนซอง และข้อมูลใบนำส่ง เพื่อกลับไปเริ่มชุดงานใหม่</p>
+        <div class="delete-target" id="finishPrintJobSummary"></div>
+        <div class="dialog-actions"><button class="button secondary" id="cancelFinishPrintJob" type="button">กลับไปทำต่อ</button><button class="button finish-job-button" type="submit">ยืนยันจบชุดงาน</button></div>
+      </form>
+    </dialog>
+
     <dialog id="adminAuthDialog" class="confirm-dialog">
       <form id="adminAuthForm">
         <div class="dialog-title"><div><span class="eyebrow">เฉพาะผู้ดูแล</span><h2>เข้าสู่ระบบผู้ดูแล</h2></div><button class="close-button" id="closeAdminAuth" type="button" aria-label="ปิด">×</button></div>
@@ -953,6 +967,7 @@ const elements = {
   heroSelected: $("#heroSelected"),
   sideSelected: $("#sideSelected"),
   heroPrint: $("#heroPrint"),
+  finishPrintJob: $("#finishPrintJob"),
   openManifestDialog: $("#openManifestDialog"),
   workflowHint: $("#workflowHint"),
   notice: $("#noticeText"),
@@ -1013,6 +1028,9 @@ const elements = {
   deletePrintJobPassword: $("#deletePrintJobPassword"),
   deletePrintJobMessage: $("#deletePrintJobMessage"),
   confirmDeletePrintJob: $("#confirmDeletePrintJob"),
+  finishPrintJobDialog: $("#finishPrintJobDialog"),
+  finishPrintJobForm: $("#finishPrintJobForm"),
+  finishPrintJobSummary: $("#finishPrintJobSummary"),
   printJobCreator: $("#printJobCreator"),
   printJobCreatorLocked: $("#printJobCreatorLocked"),
   printJobCreatorLockedName: $("#printJobCreatorLockedName"),
@@ -1264,6 +1282,10 @@ function updateWorkflowUi(selectedCount = state.selected.size) {
     elements.openManifestDialog.title = !hasCreator
       ? "กรุณาเริ่มชุดงานและเลือกกลุ่มงานก่อน"
       : (selectedCount === 0 ? "กรุณาเลือกผู้รับก่อนพิมพ์ใบนำส่ง" : (!hasEnvelopePrinted ? "กรุณาพิมพ์หน้าซองจดหมายก่อน" : ""));
+  }
+  if (elements.finishPrintJob) {
+    elements.finishPrintJob.disabled = !hasCreator || selectedCount === 0;
+    elements.finishPrintJob.title = !hasCreator || selectedCount === 0 ? "ยังไม่มีชุดงานที่พร้อมจบ" : "บันทึกว่าเสร็จสิ้นและล้างค่าชุดงาน";
   }
 }
 
@@ -1625,8 +1647,7 @@ function closeDeletePrintJobDialog() {
   elements.deletePrintJobDialog.dataset.printJobId = "";
 }
 
-function startNewPrintJob() {
-  saveCurrentPrintJobDraft();
+function resetPrintJobWorkspace() {
   state.currentPrintJobId = "";
   state.selected.clear();
   state.settings.printJobCreator = "";
@@ -1639,9 +1660,47 @@ function startNewPrintJob() {
   persistSettings();
   persistPrintHistory();
   render();
+}
+
+function startNewPrintJob() {
+  saveCurrentPrintJobDraft();
+  resetPrintJobWorkspace();
   elements.printHistoryDialog?.close();
   focusPrintJobCreator();
   setNotice("เริ่มชุดงานใหม่แล้ว กรุณาเลือกกลุ่มงานก่อนเลือกรายชื่อผู้รับ");
+}
+
+function openFinishPrintJobDialog() {
+  const job = saveCurrentPrintJobDraft();
+  if (!job || !state.settings.printJobCreator || state.selected.size === 0) {
+    setNotice("ยังไม่มีชุดงานที่พร้อมจบ กรุณาเลือกกลุ่มงานและรายชื่อผู้รับก่อน");
+    return;
+  }
+  const { recipientCount, envelopeCount } = printJobCounts(job);
+  elements.finishPrintJobSummary.textContent = `${job.creatorGroup || "ไม่ระบุกลุ่มงาน"} · ${recipientCount} รายชื่อ · ${envelopeCount} ซอง`;
+  elements.finishPrintJobDialog.showModal();
+}
+
+function closeFinishPrintJobDialog() {
+  if (elements.finishPrintJobDialog.open) elements.finishPrintJobDialog.close();
+}
+
+function handleFinishPrintJobSubmit(event) {
+  event.preventDefault();
+  const job = saveCurrentPrintJobDraft();
+  if (!job) {
+    closeFinishPrintJobDialog();
+    setNotice("ไม่พบชุดงานที่ต้องการจบ");
+    return;
+  }
+  const completedAt = new Date().toISOString();
+  job.completedAt = completedAt;
+  job.updatedAt = completedAt;
+  persistPrintHistory();
+  queuePrintJobCloudSave(job);
+  closeFinishPrintJobDialog();
+  resetPrintJobWorkspace();
+  setNotice("จบชุดงานและล้างค่าทั้งหมดแล้ว กด “เริ่มชุดงานใหม่” เพื่อเริ่มงานรอบถัดไป");
 }
 
 function requirePrintJobCreator() {
@@ -3416,6 +3475,10 @@ $("#openPrintHistory").addEventListener("click", openPrintHistory);
 $("#closePrintHistory").addEventListener("click", closePrintHistory);
 $("#donePrintHistory").addEventListener("click", closePrintHistory);
 $("#startNewPrintJob").addEventListener("click", startNewPrintJob);
+elements.finishPrintJob.addEventListener("click", openFinishPrintJobDialog);
+$("#closeFinishPrintJobDialog").addEventListener("click", closeFinishPrintJobDialog);
+$("#cancelFinishPrintJob").addEventListener("click", closeFinishPrintJobDialog);
+elements.finishPrintJobForm.addEventListener("submit", handleFinishPrintJobSubmit);
 elements.historyGroupFilter.addEventListener("change", handleHistoryFilterChange);
 elements.historyMonthFilter.addEventListener("change", () => {
   elements.historyDateFilter.value = "";

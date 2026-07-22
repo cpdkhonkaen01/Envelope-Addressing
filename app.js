@@ -164,6 +164,7 @@ const elements = {
   heroSelected: $("#heroSelected"),
   sideSelected: $("#sideSelected"),
   heroPrint: $("#heroPrint"),
+  finishPrintJob: $("#finishPrintJob"),
   openManifestDialog: $("#openManifestDialog"),
   workflowHint: $("#workflowHint"),
   notice: $("#noticeText"),
@@ -224,6 +225,9 @@ const elements = {
   deletePrintJobPassword: $("#deletePrintJobPassword"),
   deletePrintJobMessage: $("#deletePrintJobMessage"),
   confirmDeletePrintJob: $("#confirmDeletePrintJob"),
+  finishPrintJobDialog: $("#finishPrintJobDialog"),
+  finishPrintJobForm: $("#finishPrintJobForm"),
+  finishPrintJobSummary: $("#finishPrintJobSummary"),
   printJobCreator: $("#printJobCreator"),
   printJobCreatorLocked: $("#printJobCreatorLocked"),
   printJobCreatorLockedName: $("#printJobCreatorLockedName"),
@@ -475,6 +479,10 @@ function updateWorkflowUi(selectedCount = state.selected.size) {
     elements.openManifestDialog.title = !hasCreator
       ? "กรุณาเริ่มชุดงานและเลือกกลุ่มงานก่อน"
       : (selectedCount === 0 ? "กรุณาเลือกผู้รับก่อนพิมพ์ใบนำส่ง" : (!hasEnvelopePrinted ? "กรุณาพิมพ์หน้าซองจดหมายก่อน" : ""));
+  }
+  if (elements.finishPrintJob) {
+    elements.finishPrintJob.disabled = !hasCreator || selectedCount === 0;
+    elements.finishPrintJob.title = !hasCreator || selectedCount === 0 ? "ยังไม่มีชุดงานที่พร้อมจบ" : "บันทึกว่าเสร็จสิ้นและล้างค่าชุดงาน";
   }
 }
 
@@ -836,8 +844,7 @@ function closeDeletePrintJobDialog() {
   elements.deletePrintJobDialog.dataset.printJobId = "";
 }
 
-function startNewPrintJob() {
-  saveCurrentPrintJobDraft();
+function resetPrintJobWorkspace() {
   state.currentPrintJobId = "";
   state.selected.clear();
   state.settings.printJobCreator = "";
@@ -850,9 +857,47 @@ function startNewPrintJob() {
   persistSettings();
   persistPrintHistory();
   render();
+}
+
+function startNewPrintJob() {
+  saveCurrentPrintJobDraft();
+  resetPrintJobWorkspace();
   elements.printHistoryDialog?.close();
   focusPrintJobCreator();
   setNotice("เริ่มชุดงานใหม่แล้ว กรุณาเลือกกลุ่มงานก่อนเลือกรายชื่อผู้รับ");
+}
+
+function openFinishPrintJobDialog() {
+  const job = saveCurrentPrintJobDraft();
+  if (!job || !state.settings.printJobCreator || state.selected.size === 0) {
+    setNotice("ยังไม่มีชุดงานที่พร้อมจบ กรุณาเลือกกลุ่มงานและรายชื่อผู้รับก่อน");
+    return;
+  }
+  const { recipientCount, envelopeCount } = printJobCounts(job);
+  elements.finishPrintJobSummary.textContent = `${job.creatorGroup || "ไม่ระบุกลุ่มงาน"} · ${recipientCount} รายชื่อ · ${envelopeCount} ซอง`;
+  elements.finishPrintJobDialog.showModal();
+}
+
+function closeFinishPrintJobDialog() {
+  if (elements.finishPrintJobDialog.open) elements.finishPrintJobDialog.close();
+}
+
+function handleFinishPrintJobSubmit(event) {
+  event.preventDefault();
+  const job = saveCurrentPrintJobDraft();
+  if (!job) {
+    closeFinishPrintJobDialog();
+    setNotice("ไม่พบชุดงานที่ต้องการจบ");
+    return;
+  }
+  const completedAt = new Date().toISOString();
+  job.completedAt = completedAt;
+  job.updatedAt = completedAt;
+  persistPrintHistory();
+  queuePrintJobCloudSave(job);
+  closeFinishPrintJobDialog();
+  resetPrintJobWorkspace();
+  setNotice("จบชุดงานและล้างค่าทั้งหมดแล้ว กด “เริ่มชุดงานใหม่” เพื่อเริ่มงานรอบถัดไป");
 }
 
 function requirePrintJobCreator() {
@@ -2627,6 +2672,10 @@ $("#openPrintHistory").addEventListener("click", openPrintHistory);
 $("#closePrintHistory").addEventListener("click", closePrintHistory);
 $("#donePrintHistory").addEventListener("click", closePrintHistory);
 $("#startNewPrintJob").addEventListener("click", startNewPrintJob);
+elements.finishPrintJob.addEventListener("click", openFinishPrintJobDialog);
+$("#closeFinishPrintJobDialog").addEventListener("click", closeFinishPrintJobDialog);
+$("#cancelFinishPrintJob").addEventListener("click", closeFinishPrintJobDialog);
+elements.finishPrintJobForm.addEventListener("submit", handleFinishPrintJobSubmit);
 elements.historyGroupFilter.addEventListener("change", handleHistoryFilterChange);
 elements.historyMonthFilter.addEventListener("change", () => {
   elements.historyDateFilter.value = "";

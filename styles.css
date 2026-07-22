@@ -80,6 +80,9 @@ body.app-locked .login-screen{display:grid}
 .button.primary[disabled]{border-color:#b7c5eb;background:#8fa8ed;color:#fff}
 .button.new-job-button{border:1px solid #bcd0ff;background:#fff;color:#1d4ed8;box-shadow:0 8px 18px rgba(40,86,217,.08)}
 .button.new-job-button:hover{border-color:#2856d9;background:#eef3ff;transform:translateY(-1px)}
+.button.finish-job-button{border:1px solid #15966d;background:#20a276;color:#fff;box-shadow:0 8px 18px rgba(32,162,118,.18)}
+.button.finish-job-button:hover{background:#168963;transform:translateY(-1px)}.button.finish-job-button:disabled{border-color:#d8e6e1;background:#e9f1ee;color:#8aa39a;box-shadow:none}
+.finish-icon{border-color:#b8e5d5!important;background:#e9f8f2!important;color:#137555!important}.finish-text{color:#137555!important}
 .button.history-button{border:1px solid #cbd7f3;background:#edf3ff;color:#234ec9}
 .button.history-button:hover{border-color:#9eb4eb;background:#e1eaff}
 .preview-panel{align-self:center;justify-self:center;width:min(720px,94%)}

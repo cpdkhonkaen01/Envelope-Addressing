@@ -75,6 +75,7 @@
           </label>
           <div class="hero-actions">
             <button class="button new-job-button" id="startNewPrintJob" type="button">＋ เริ่มชุดงานใหม่</button>
+            <button class="button finish-job-button" id="finishPrintJob" type="button" disabled>✓ จบชุดงาน</button>
             <button class="button primary" id="heroPrint" type="button">พิมพ์หน้าซองจดหมาย <b id="heroSelected">0</b></button>
             <button class="button secondary" id="openManifestDialog" type="button">พิมพ์ใบนำส่ง</button>
             <button class="button history-button" id="openPrintHistory" type="button">ดูประวัติชุดงานพิมพ์</button>
@@ -323,6 +324,16 @@
         <label class="form-field"><span>รหัสยืนยันการลบ *</span><input id="deletePrintJobPassword" type="password" minlength="8" autocomplete="current-password" required placeholder="กรอกรหัสผ่านผู้ดูแล" /><small>ต้องกรอกรหัสผ่านผู้ดูแลอีกครั้ง เพื่อป้องกันการกดลบผิด</small></label>
         <p class="form-message" id="deletePrintJobMessage" role="status" aria-live="polite"></p>
         <div class="dialog-actions"><button class="button secondary" id="cancelDeletePrintJob" type="button">ยกเลิก</button><button class="button danger solid" id="confirmDeletePrintJob" type="submit">ยืนยันลบประวัติ</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="finishPrintJobDialog" class="confirm-dialog">
+      <form id="finishPrintJobForm">
+        <div class="confirm-icon finish-icon">✓</div>
+        <div class="dialog-title confirm-title"><div><span class="eyebrow finish-text">จบการทำงาน</span><h2>ยืนยันจบชุดงานนี้</h2></div><button class="close-button" id="closeFinishPrintJobDialog" type="button" aria-label="ปิด">×</button></div>
+        <p class="dialog-info">ระบบจะบันทึกชุดงานนี้เป็น “เสร็จสิ้น” แล้วล้างรายชื่อที่เลือก จำนวนซอง และข้อมูลใบนำส่ง เพื่อกลับไปเริ่มชุดงานใหม่</p>
+        <div class="delete-target" id="finishPrintJobSummary"></div>
+        <div class="dialog-actions"><button class="button secondary" id="cancelFinishPrintJob" type="button">กลับไปทำต่อ</button><button class="button finish-job-button" type="submit">ยืนยันจบชุดงาน</button></div>
       </form>
     </dialog>
 
